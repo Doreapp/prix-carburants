@@ -2,6 +2,8 @@
 
 Fetches french fuel prices
 
+It uses french open data. See https://www.prix-carburants.gouv.fr/rubrique/opendata/ for details.
+
 ## Installation 
 
 ### (Optional) Virtual environment
