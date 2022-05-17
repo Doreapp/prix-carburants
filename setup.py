@@ -11,7 +11,7 @@ with open("requirements.txt", "r") as f:
 setup(
     name="prixcarburant",
     version="0.0.1",
-    description="Fetch of french fuel prices",
+    description="Fetch french fuel prices",
     license="MIT",
     long_description=long_description,
     author="Antoine Mandin",
