@@ -78,10 +78,16 @@ Need an access token, as explained [here](https://docs.github.com/en/rest/overvi
 
 To update an existing file, one need to specify the *sha* of the *blob* of the file. It can be found using the API to get a file (see above, the returned JSON contains a `sha` key).
 
-#### Scheduled pipeline
+#### Scheduled workflows
 
-*TODO*
+```yaml
+on:
+  schedule:
+    - cron:  '30 * * * *'
+```
+
+Above script makes the workflow run every hour at 30th minute (i.e. at 00:30, 01:30, etc.)
 
 #### GitHub pages
 
-*TODO*
+Works well, see https://doreapp.github.io/prix-carburants/
