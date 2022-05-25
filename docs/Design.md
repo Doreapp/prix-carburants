@@ -22,26 +22,12 @@ Main processes of the app would be:
 ### Some solutions
 
 To **fetch up-to-date data about fuel prices**, one can use a `python` script, that would fetch the correct data.
-Coupled with `GitHub` [scheduled](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) continuous integration, it can frequently update of the data
+Coupled with `GitHub` [scheduled](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule) continuous integration, it can frequently update the data
 
-To **save data about fuel prices**, one can use files stored inside a GitHub repository. Actually, the idea would by to use the same repository to store the data, resulting in a file structure like the following.
-
-```
-repository
-│   README.md
-└───data_fetcher
-│   │   __main__.py
-│   │   __init__.py
-└───data
-│   │   2022-05-25.json
-│   │   2022-05-24.json
-│   │   2022-metrics.json
-```
+To **save data about fuel prices**, one can use files stored inside a GitHub repository. Actually, the idea would by to use the same repository to store the data.
 
 This implies making automatic commits to the repository during the continuous integration. It can be done using `GitHub REST API`, as explained [here](https://docs.github.com/en/rest/repos/contents#create-or-update-file-contents).
-However, this also implies avoiding to run continuous integration workflows due to the change of the data files. Indeed, if the automatic commit results in a workflow involving an automatic commit, we'll be in an infinite loop. GitHub offers the possibility to exclude some path in workflow's triggers, as explained [here](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-excluding-paths). Excluding `./data/*` path would then allow this way of working.
-
-However, making automatic commits in `master` branch may pollute the history of the repository... Therefore, using a custom branch named `data` that would contain the `./data` directory and never trigger any workflow may be a better solution.
+However, this also implies avoiding to run continuous integration workflows due to the change of the data files. Indeed, if the automatic commit results in a workflow involving an automatic commit, we'll be in an infinite loop. To avoid that, using a custom branch named `data` - that would contain a dedicated `./data` directory and never trigger any workflow - may be a better solution.
 
 To **access the data**, one can take advantage of `GitHub REST API` once again, see [here](https://docs.github.com/en/rest/repos/contents#get-repository-content).
 
@@ -76,7 +62,7 @@ PUT https://api.github.com/repos/Doreapp/prix-carburants/contents/prixcarburants
 
 Need an access token, as explained [here](https://docs.github.com/en/rest/overview/other-authentication-methods#via-oauth-and-personal-access-tokens). It can be stored as a `Repository secret`, so that *Actions* can use it safely.
 
-To update an existing file, one need to specify the *sha* of the *blob* of the file. It can be found using the API to get a file (see above, the returned JSON contains a `sha` key).
+To update an existing file, one needs to specify the *sha* of the *blob* of the file. It can be found using the API to get a file (see above, the returned JSON contains a `sha` key).
 
 #### Scheduled workflows
 
