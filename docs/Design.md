@@ -49,6 +49,6 @@ To **build the web front-end**, taking advantage of `GitHub`'s features looks li
 
 ### Sum Up
 
-File structure
-
-PRocesses
+- A branch `data` that contains a directory `./data/` and no continuous integration.
+- Automatic (scheduled) workflows updating the data stored using `python` scripts.
+- A GitHub-hosted web front-end that uses and displays the data stored. 
