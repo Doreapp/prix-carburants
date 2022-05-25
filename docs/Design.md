@@ -90,4 +90,11 @@ Above script makes the workflow run every hour at 30th minute (i.e. at 00:30, 01
 
 #### GitHub pages
 
-Works well, see https://doreapp.github.io/prix-carburants/
+Works well, see https://doreapp.github.io/prix-carburants/.
+
+### Example [electronjs.org](https://github.com/electron/electronjs.org)
+
+[electronjs.org](https://github.com/electron/electronjs.org) uses [Jekyll](https://jekyllrb.com/) to build its website.
+It also uses a [workflow to deploy the code to build on gh-pages branch](https://github.com/electron/electronjs.org/blob/master/.github/workflows/electron-data.yml).
+
+[gh-pages branch](https://github.com/electron/electronjs.org/tree/gh-pages) has some useful documentation about how to develop jekyll apps.
