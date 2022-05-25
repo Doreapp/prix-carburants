@@ -66,6 +66,8 @@ GET https://api.github.com/repos/Doreapp/prix-carburants/contents/prixcarburants
 It works.
 It returns a `JSON` containing the file's content as a BASE64-encoded string.
 
+Use query param `ref` to specify the branch.
+
 **Pushing a file**
 
 ```
@@ -73,6 +75,8 @@ PUT https://api.github.com/repos/Doreapp/prix-carburants/contents/prixcarburants
 ```
 
 Need an access token, as explained [here](https://docs.github.com/en/rest/overview/other-authentication-methods#via-oauth-and-personal-access-tokens). It can be stored as a `Repository secret`, so that *Actions* can use it safely.
+
+To update an existing file, one need to specify the *sha* of the *blob* of the file. It can be found using the API to get a file (see above, the returned JSON contains a `sha` key).
 
 #### Scheduled pipeline
 
