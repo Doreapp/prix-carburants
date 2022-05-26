@@ -4,7 +4,7 @@ Fetches french fuel prices
 
 It uses french open data. See https://www.prix-carburants.gouv.fr/rubrique/opendata/ for details.
 
-## Installation 
+## Installation
 
 ### (Optional) Virtual environment
 
@@ -27,4 +27,18 @@ pip install -r requirements.txt
 
 ```bash
 python3 -m prixcarburants -h
+```
+
+**Command help**:
+
+```bash
+python3 -m prixcarburants <command> -h
+```
+
+### Download example
+
+Example on how to download today's data about fuel prices:
+
+```bash
+python3 -m prixcarburants download day
 ```
