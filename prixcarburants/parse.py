@@ -9,7 +9,11 @@ from .models import SalePoint
 
 
 def build_sale_points(filename: str) -> List[SalePoint]:
-    """Build sale points from file"""
+    """
+    Build sale points from file
+    :param filename: Name of the file to parse
+    :return: Sale points parsed
+    """
     with open(filename, "r", encoding="windows-1252") as stream:
         tree = ET.parse(stream)
     root = tree.getroot()
