@@ -24,7 +24,13 @@ update-data: # Update the data stored in `data` branch
 	ls -l data
 	git add data/
 	git stash
+	@echo "Up-to-date data save in the stash"
 	git checkout test
 	git stash pop
-	git commit -m ":gear: Update data"
-	git push
+	if test -n "$( git status -s)"; then \
+		git commit -m ":gear: Update data"; \
+		git push; \
+		echo "Data pushed to data branch"; \
+	else \
+		echo "No data to update"; \
+	fi
