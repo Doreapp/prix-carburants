@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(os.path.basename(__file__))
 def dir_path(path: str) -> str:
     """
     Ensure ``path`` points nothing or a directory.
-    Raise an exception else.
+    Raise an exception otherwise.
     :return: given path
     """
     if os.path.isdir(path) or not os.path.exists(path):

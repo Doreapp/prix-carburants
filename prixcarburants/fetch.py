@@ -26,12 +26,12 @@ def download_zip(url: str, output_directory: str = "tmp") -> List[str]:
     :return: Names of the files extracted in ``output_directory``
     """
     LOGGER.debug("Download ZIP from %s into %s", url, output_directory)
-    LOGGER.info("Downloading in %s directory...", output_directory)
+    LOGGER.info("Downloading ZIP into %s directory...", output_directory)
     response = requests.get(url)
     with io.BytesIO(response.content) as stream, zipfile.ZipFile(stream) as zip_file:
         names = zip_file.namelist()
         zip_file.extractall(output_directory)
-    LOGGER.info("Downloaded as: %s", ", ".join(names))
+    LOGGER.info("Files downloaded and extracted as: %s", ", ".join(names))
     return names
 
 
