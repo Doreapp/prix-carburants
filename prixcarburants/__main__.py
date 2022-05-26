@@ -29,12 +29,15 @@ def build_cli_parser() -> argparse.ArgumentParser:
         "prixcarburants",
         description="Program to fetch french fuel prices",
         epilog="Built by Antoine MANDIN",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     subparsers = parser.add_subparsers(
         title="command", description="Program command", dest="command"
     )
     download_subparser = subparsers.add_parser(
-        "download", help="Download data from french Open Data"
+        "download",
+        help="Download data from french Open Data",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     download_subparser.add_argument(
         "type",
