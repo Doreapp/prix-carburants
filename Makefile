@@ -19,6 +19,7 @@ lint: # Check code with isort, black and pylint to identify any problem
 	${PYTHON} -m pylint ${PROJECT_NAME}/*
 
 update-data: # Update the data stored in `data` branch
+	git fetch
 	rm -rf data
 	${PYTHON} -m prixcarburants download day -o data
 	ls -l data
