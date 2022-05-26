@@ -4,6 +4,7 @@ https://www.prix-carburants.gouv.fr/rubrique/opendata/ data
 """
 
 import io
+import logging
 import os
 import zipfile
 from typing import List
@@ -14,23 +15,23 @@ INSTANTANEOUS_URL = "https://donnees.roulez-eco.fr/opendata/instantane"
 DAY_URL = "https://donnees.roulez-eco.fr/opendata/jour"
 YEAR_URL = "https://donnees.roulez-eco.fr/opendata/annee"
 
+LOGGER = logging.getLogger(os.path.basename(__file__))
 
-def download_zip(url: str, output_directory: str = "tmp", quiet: bool = False) -> List[str]:
+
+def download_zip(url: str, output_directory: str = "tmp") -> List[str]:
     """
     Download a ZIP from ``url`` and extract it in ``output_directory``
     :param url: Url to download the ZIP from
     :param output_directory: Directory to extract the ZIP file in
-    :param quiet: True to prevent printing on the console
     :return: Names of the files extracted in ``output_directory``
     """
-    if not quiet:
-        print(f"Downloading in {output_directory} directory...")
+    LOGGER.debug("Download ZIP from %s into %s", url, output_directory)
+    LOGGER.info("Downloading in %s directory...", output_directory)
     response = requests.get(url)
     with io.BytesIO(response.content) as stream, zipfile.ZipFile(stream) as zip_file:
         names = zip_file.namelist()
         zip_file.extractall(output_directory)
-    if not quiet:
-        print(f"Downloaded as: {', '.join(names)}")
+    LOGGER.info("Downloaded as: %s", ", ".join(names))
     return names
 
 

@@ -3,10 +3,13 @@ Main entrypoint
 """
 
 import argparse
+import logging
 import os
 from typing import List, Optional
 
 from .fetch import DataFechter
+
+LOGGER = logging.getLogger(os.path.basename(__file__))
 
 
 def dir_path(path: str) -> str:
@@ -59,6 +62,7 @@ def main(cli: Optional[List[str]] = None):
     parser = build_cli_parser()
     arguments = parser.parse_args(cli)
     if arguments.command == "download":
+        LOGGER.debug("'download' command")
         data_fetcher = DataFechter(arguments.output)
         functions = {
             "instantaneous": data_fetcher.download_instantaneous_data,
