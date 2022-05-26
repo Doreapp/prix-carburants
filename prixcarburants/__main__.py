@@ -16,7 +16,9 @@ def build_cli_parser() -> argparse.ArgumentParser:
         description="Program to fetch french fuel prices",
         epilog="Built by Antoine MANDIN",
     )
-    parser.add_argument("type", help="Type of data to download", choices=("instantaneous", "year"))
+    parser.add_argument(
+        "type", help="Type of data to download", choices=("instantaneous", "day", "year")
+    )
     return parser
 
 
@@ -31,6 +33,8 @@ def main(cli: Optional[List[str]] = None):
         DataFechter().download_instantaneous_data()
         sale_points = build_sale_points(".tmp/PrixCarburants_instantane.xml")
         print(f"Found {len(sale_points)} sale points")
+    elif arguments.type == "day":
+        DataFechter().download_day_data()
     elif arguments.type == "year":
         DataFechter().download_year_data()
 
