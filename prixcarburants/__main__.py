@@ -57,16 +57,16 @@ def build_cli_parser() -> argparse.ArgumentParser:
     )
     transform_subparser = subparsers.add_parser(
         "transform",
-        help="Transform data from raw XML to json",
+        help="Transform data from raw XML to JSON",
     )
     transform_subparser.add_argument(
         "file",
-        help="Path to the XML file to parse and transform",
+        help="XML file to parse and transform",
     )
     transform_subparser.add_argument(
         "-o",
         "--output",
-        help="Path to the output file to save the data in. "
+        help="output file to save the data in. "
         "Default will save the data in the same directory as the input file, "
         "with the same name but as a JSON file.",
         default=None,

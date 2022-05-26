@@ -27,7 +27,7 @@ def build_sale_points(filename: str) -> List[SalePoint]:
 
 
 class ClassEncoder(json.JSONEncoder):
-    """Encoder that handle custom classes"""
+    """Encoder that handles custom classes"""
 
     def default(self, o):
         return o.__dict__
@@ -37,7 +37,7 @@ def save_as_json(obj, output_file: str):
     """
     Save ``obj`` in ``output_file`` as a json.
     :param obj: Object to save
-    :param output_file: Path to the file to writ in.
+    :param output_file: Path to the file to write in.
         May create a file or override the existing file
     """
     LOGGER.debug("Saving a json in %f", output_file)
