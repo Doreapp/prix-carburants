@@ -3,9 +3,21 @@ Main entrypoint
 """
 
 import argparse
+import os
 from typing import List, Optional
 
 from .fetch import DataFechter
+
+
+def dir_path(path: str) -> str:
+    """
+    Ensure ``path`` points nothing or a directory.
+    Raise an exception else.
+    :return: given path
+    """
+    if os.path.isdir(path) or not os.path.exists(path):
+        return path
+    raise NotADirectoryError(path)
 
 
 def build_cli_parser() -> argparse.ArgumentParser:
@@ -29,6 +41,13 @@ def build_cli_parser() -> argparse.ArgumentParser:
         "[year]: current year's data.",
         choices=("instantaneous", "day", "year"),
     )
+    download_subparser.add_argument(
+        "-o",
+        "--output",
+        help="Path to the output directory to save the data in",
+        type=dir_path,
+        default=".tmp",
+    )
     return parser
 
 
@@ -40,10 +59,11 @@ def main(cli: Optional[List[str]] = None):
     parser = build_cli_parser()
     arguments = parser.parse_args(cli)
     if arguments.command == "download":
+        data_fetcher = DataFechter(arguments.output)
         functions = {
-            "instantaneous": DataFechter().download_instantaneous_data,
-            "day": DataFechter().download_day_data,
-            "year": DataFechter().download_year_data,
+            "instantaneous": data_fetcher.download_instantaneous_data,
+            "day": data_fetcher.download_day_data,
+            "year": data_fetcher.download_year_data,
         }
         functions[arguments.type]()
     else:
