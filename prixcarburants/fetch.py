@@ -45,26 +45,29 @@ class DataFechter:
         self.output_directory = output_directory
         os.makedirs(self.output_directory, exist_ok=True)
 
-    def download_instantaneous_data(self):
+    def download_instantaneous_data(self) -> str:
         """
         Download newest data available. Uses INSTANTANEOUS_URL.
-        :return: Paths to the files downloaded
+        :return: Path to the file downloaded
         """
         filenames = download_zip(INSTANTANEOUS_URL, self.output_directory)
-        return map(lambda name: os.path.join(self.output_directory, name), filenames)
+        assert len(filenames) == 1
+        return os.path.join(self.output_directory, filenames[0])
 
-    def download_year_data(self):
+    def download_year_data(self) -> str:
         """
         Download current year's data. Uses YEAR_URL.
-        :return: Paths to the files downloaded
+        :return: Path to the file downloaded
         """
         filenames = download_zip(YEAR_URL, self.output_directory)
-        return map(lambda name: os.path.join(self.output_directory, name), filenames)
+        assert len(filenames) == 1
+        return os.path.join(self.output_directory, filenames[0])
 
-    def download_day_data(self):
+    def download_day_data(self) -> str:
         """
         Download today's data. Uses DAY_URL.
-        :return: Paths to the files downloaded
+        :return: Path to the file downloaded
         """
         filenames = download_zip(DAY_URL, self.output_directory)
-        return map(lambda name: os.path.join(self.output_directory, name), filenames)
+        assert len(filenames) == 1
+        return os.path.join(self.output_directory, filenames[0])

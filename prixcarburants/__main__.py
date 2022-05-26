@@ -69,7 +69,8 @@ def main(cli: Optional[List[str]] = None):
             "day": data_fetcher.download_day_data,
             "year": data_fetcher.download_year_data,
         }
-        functions[arguments.type]()
+        result = functions[arguments.type]()
+        print(result)
     else:
         parser.print_help()
 
