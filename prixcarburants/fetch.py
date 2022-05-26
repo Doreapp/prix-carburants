@@ -14,13 +14,18 @@ DAY_URL = "https://donnees.roulez-eco.fr/opendata/jour"
 YEAR_URL = "https://donnees.roulez-eco.fr/opendata/annee"
 
 
-def download_zip(url, output_directory="tmp"):
+def download_zip(url, output_directory="tmp", quiet=False):
     """
     Download a ZIP from ``url`` and extract it in ``output_directory``
     """
+    if not quiet:
+        print(f"Downloading in {output_directory} directory...")
     response = requests.get(url)
     with io.BytesIO(response.content) as stream, zipfile.ZipFile(stream) as zip_file:
+        names = zip_file.namelist()
         zip_file.extractall(output_directory)
+    if not quiet:
+        print(f"Downloaded as: {', '.join(names)}")
 
 
 class DataFechter:
