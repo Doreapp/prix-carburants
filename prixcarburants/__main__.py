@@ -7,6 +7,7 @@ import sys
 from typing import List
 
 from .fetch import DataFechter
+from .parse import build_sale_points
 
 
 def build_cli_parser() -> argparse.ArgumentParser:
@@ -29,6 +30,8 @@ def main(cli: List[str]):
     arguments = parser.parse_args(cli)
     if arguments.type == "instantaneous":
         DataFechter().download_instantaneous_data()
+        sale_points = build_sale_points(".tmp/PrixCarburants_instantane.xml")
+        print(f"Found {len(sale_points)} sale points")
     elif arguments.type == "year":
         DataFechter().download_year_data()
 
