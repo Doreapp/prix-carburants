@@ -3,8 +3,7 @@ Main entrypoint
 """
 
 import argparse
-import sys
-from typing import List
+from typing import List, Optional
 
 from .fetch import DataFechter
 from .parse import build_sale_points
@@ -21,7 +20,7 @@ def build_cli_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(cli: List[str]):
+def main(cli: Optional[List[str]] = None):
     """
     Main entrypoint
     :param cli: Command line arguments
@@ -37,4 +36,4 @@ def main(cli: List[str]):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()
