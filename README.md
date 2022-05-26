@@ -35,10 +35,20 @@ python3 -m prixcarburants -h
 python3 -m prixcarburants <command> -h
 ```
 
-### Download example
+### Usage example
 
-Example on how to download today's data about fuel prices:
+1. Download today's data about fuel prices, into `data` directory
 
-```bash
-python3 -m prixcarburants download day
-```
+    ```bash
+    $ python3 -m prixcarburants download day -o data
+    data/PrixCarburants_quotidien_20220525.xml
+    ```
+
+2. Transform it in a `json` file
+
+    ```bash
+    $ python3 -m prixcarburants transform data/PrixCarburants_quotidien_20220525.xml
+    data/PrixCarburants_quotidien_20220525.json
+    ```
+
+3. *Result* : `cat data/PrixCarburants_quotidien_20220525.json`
