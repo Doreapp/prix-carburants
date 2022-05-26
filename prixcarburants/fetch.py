@@ -10,6 +10,7 @@ import zipfile
 import requests
 
 INSTANTANEOUS_URL = "https://donnees.roulez-eco.fr/opendata/instantane"
+DAY_URL = "https://donnees.roulez-eco.fr/opendata/jour"
 YEAR_URL = "https://donnees.roulez-eco.fr/opendata/annee"
 
 
@@ -45,3 +46,10 @@ class DataFechter:
         Uses YEAR_URL
         """
         download_zip(YEAR_URL, self.output_directory)
+
+    def download_day_data(self):
+        """
+        Download latest day data
+        Uses DAY_URL
+        """
+        download_zip(DAY_URL, self.output_directory)
