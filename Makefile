@@ -17,3 +17,14 @@ lint: # Check code with isort, black and pylint to identify any problem
 	${PYTHON} -m isort --line-length ${LINE_LENGTH} --profile black --check ${PROJECT_NAME} .
 	${PYTHON} -m black --line-length ${LINE_LENGTH} --check ${PROJECT_NAME}/* *.py
 	${PYTHON} -m pylint ${PROJECT_NAME}/*
+
+update-data: # Update the data stored in `data` branch
+	rm -rf data
+	${PYTHON} -m prixcarburants download day -o data
+	ls -l data
+	git add data/
+	git stash
+	git checkout test
+	git stash pop
+	git commit -m ":gear: Update data"
+	git push
