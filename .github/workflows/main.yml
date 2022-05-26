@@ -20,3 +20,6 @@ jobs:
     - name: Linter analysis
       run: |
         make lint
+    - name: Update data
+      run: |
+        make update-data
