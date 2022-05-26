@@ -3,10 +3,14 @@ Parser of data from https://www.prix-carburants.gouv.fr/rubrique/opendata/
 """
 
 import json
+import logging
+import os
 import xml.etree.ElementTree as ET
 from typing import List
 
 from .models import SalePoint
+
+LOGGER = logging.getLogger(os.path.basename(__file__))
 
 
 def build_sale_points(filename: str) -> List[SalePoint]:
@@ -15,11 +19,11 @@ def build_sale_points(filename: str) -> List[SalePoint]:
     :param filename: Name of the file to parse
     :return: Sale points parsed
     """
+    LOGGER.info("Building sale points from %f", filename)
     with open(filename, "r", encoding="windows-1252") as stream:
         tree = ET.parse(stream)
     root = tree.getroot()
-    sale_points = [SalePoint.build(element) for element in root]
-    return sale_points
+    return [SalePoint.build(element) for element in root]
 
 
 class ClassEncoder(json.JSONEncoder):
@@ -36,5 +40,6 @@ def save_as_json(obj, output_file: str):
     :param output_file: Path to the file to writ in.
         May create a file or override the existing file
     """
+    LOGGER.debug("Saving a json in %f", output_file)
     with open(output_file, "w", encoding="utf8") as stream:
         json.dump(obj, stream, cls=ClassEncoder)
