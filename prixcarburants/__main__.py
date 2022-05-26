@@ -7,6 +7,7 @@ import logging
 import os
 from typing import List, Optional
 
+from . import parse
 from .fetch import DataFechter
 
 LOGGER = logging.getLogger(os.path.basename(__file__))
@@ -54,6 +55,22 @@ def build_cli_parser() -> argparse.ArgumentParser:
         type=dir_path,
         default=".tmp",
     )
+    transform_subparser = subparsers.add_parser(
+        "transform",
+        help="Transform data from raw XML to json",
+    )
+    transform_subparser.add_argument(
+        "file",
+        help="Path to the XML file to parse and transform",
+    )
+    transform_subparser.add_argument(
+        "-o",
+        "--output",
+        help="Path to the output file to save the data in. "
+        "Default will save the data in the same directory as the input file, "
+        "with the same name but as a JSON file.",
+        default=None,
+    )
     return parser
 
 
@@ -74,6 +91,15 @@ def main(cli: Optional[List[str]] = None):
         }
         result = functions[arguments.type]()
         print(result)
+    elif arguments.command == "transform":
+        sales_points = parse.build_sale_points(arguments.file)
+        output = arguments.output
+        if output is None:
+            directory = os.path.dirname(arguments.file)
+            filename = os.path.splitext(os.path.basename(arguments.file))[0]
+            output = os.path.join(directory, filename + ".json")
+        parse.save_as_json(sales_points, output)
+        print(output)
     else:
         parser.print_help()
 
