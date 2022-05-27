@@ -1,12 +1,16 @@
 # Jekyll configuration
 
 title: Prix Carburants
+author: Antoine Mandin
 email: doreapp.contact@gmail.com
+copyright: "Copyright (cleft) 2022-{currentYear} {author}"
 description: >-
   [EN] A website to display statistics and raw information about french fuel prices.
   [FR] Un site pour afficher des statistiques et informations sur les prix des carburants.
+
 baseurl: ""
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
+favicon: "" # the favicon for your site
 
 # twitter_username: jekyllrb
 github_username:  doreapp
@@ -16,6 +20,9 @@ github_repo: https://github.com/Doreapp/prix-carburants
 theme: jekyll-theme-yat
 plugins:
   - jekyll-feed
+
+yat:
+  date_format: "%b %d, %Y"
 
 # Exclude from processing.
 # The following items will not be processed, by default.
