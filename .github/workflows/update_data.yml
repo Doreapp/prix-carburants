@@ -1,7 +1,10 @@
 # Wrokflow to update the data stored in `data` branch
 name: Update data
 
-on: push # TODO run on schedule cron every day
+on:
+  schedule:
+    # Run every day at 00:42
+    - cron:  '42 0 * * *'
 
 jobs:
   update-data:
