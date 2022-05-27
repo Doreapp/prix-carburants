@@ -1,7 +1,12 @@
-# Main Continuous integration workflow
-name: Continuous Integration
+# Python module's continuous integration
+name: Python Continuous Integration
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'prixcarburants/**'
+      - 'requirements*'
+      - '**.py'
 
 jobs:
   lint:
