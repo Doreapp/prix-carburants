@@ -18,7 +18,7 @@ lint: # Check code with isort, black and pylint to identify any problem
 	${PYTHON} -m black --line-length ${LINE_LENGTH} --check ${PROJECT_NAME}/* *.py
 	${PYTHON} -m pylint ${PROJECT_NAME}/*
 
-update-data: # Update the data stored in `data` branch
+update-data: # Update the data stored in `data` folder
 	$(eval DATE := $(shell date --date="yesterday" +%Y%m%d))
 	rm -rf data
 	@echo "> Downloading raw data"

@@ -57,7 +57,7 @@ Use query param `ref` to specify the branch.
 #### Automatically push to a branch
 
 To automatically (i.e. during a *workflow*) push commits to a branch, one needs:
-- To grant `Read and write permissions` to `GITHUB_TOKEN` secret variables in repository's settings (i.e. `https://github.com/Doreapp/<repo>/settings/actions`). See [Github documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token).
+- To grant `Read and write permissions` to `GITHUB_TOKEN` secret variable in repository's settings (i.e. `https://github.com/Doreapp/<repo>/settings/actions`). See [Github documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token).
 - To run some special commands. Here is what's working for me (inspired from [electron-data.yml](https://github.com/electron/electronjs.org/blob/master/.github/workflows/electron-data.yml)):
 
   ```yaml
