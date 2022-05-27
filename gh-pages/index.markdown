@@ -1,6 +1,8 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
+title: Home
+
+heading: 'Prix des carburants'
+subheading: 'Statistiques et informations en direct sur les prix des carburants français'
+banner: "/assets/images/banners/home.png"
 ---
