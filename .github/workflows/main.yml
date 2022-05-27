@@ -21,5 +21,25 @@ jobs:
       run: |
         make lint
     - name: Update data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
+        git fetch
         make update-data
+        git add data/
+        git stash
+        git checkout test
+        git stash pop
+        git status --porcelain
+        if test -n "$( git status -s)"; then
+          echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
+          chmod 600 ~/.netrc
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "doreapp@users.noreply.github.com"
+          git diff
+          git commit -m "⬆️ Update data"
+          git push
+          echo "Data pushed to data branch"
+        else
+          echo "No data to update"
+        fi

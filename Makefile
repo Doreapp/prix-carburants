@@ -20,7 +20,6 @@ lint: # Check code with isort, black and pylint to identify any problem
 
 update-data: # Update the data stored in `data` branch
 	$(eval DATE := $(shell date --date="yesterday" +%Y%m%d))
-	git fetch
 	rm -rf data
 	@echo "> Downloading raw data"
 	${PYTHON} -m prixcarburants download day -o data
@@ -29,15 +28,3 @@ update-data: # Update the data stored in `data` branch
 		data/*${DATE}.xml \
 		-o data/${DATE}.json
 	rm -rf data/*.xml
-	git add data/
-	git stash
-	@echo "> Up-to-date data saved in the stash"
-	git checkout test
-	git stash pop
-	if test -n "$(shell git status -s)"; then \
-		git commit -m ":gear: Update data"; \
-		git push; \
-		echo "Data pushed to data branch"; \
-	else \
-		echo "No data to update"; \
-	fi
