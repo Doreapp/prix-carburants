@@ -54,15 +54,26 @@ It returns a `JSON` containing the file's content as a BASE64-encoded string.
 
 Use query param `ref` to specify the branch.
 
-**Pushing a file**
+#### Automatically push to a branch
 
-```
-PUT https://api.github.com/repos/Doreapp/prix-carburants/contents/prixcarburants/testfile01.txt
-```
+To automatically (i.e. during a *workflow*) push commits to a branch, one needs:
+- To grant `Read and write permissions` to `GITHUB_TOKEN` secret variable in repository's settings (i.e. `https://github.com/Doreapp/<repo>/settings/actions`). See [Github documentation](https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token).
+- To run some special commands. Here is what's working for me (inspired from [electron-data.yml](https://github.com/electron/electronjs.org/blob/master/.github/workflows/electron-data.yml)):
 
-Need an access token, as explained [here](https://docs.github.com/en/rest/overview/other-authentication-methods#via-oauth-and-personal-access-tokens). It can be stored as a `Repository secret`, so that *Actions* can use it safely.
-
-To update an existing file, one needs to specify the *sha* of the *blob* of the file. It can be found using the API to get a file (see above, the returned JSON contains a `sha` key).
+  ```yaml
+  git fetch # Update remote
+  if test -n "$( git status -s)"; then # Something to push
+    echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
+    chmod 600 ~/.netrc
+    git config user.name "$GITHUB_ACTOR"
+    git config user.email "<username>@users.noreply.github.com"
+    git add ...
+    git commit -m "<my custom message>"
+    git push
+  else
+    echo "No data to update"
+  fi
+  ```
 
 #### Scheduled workflows
 
