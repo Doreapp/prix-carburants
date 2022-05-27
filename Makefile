@@ -28,3 +28,7 @@ update-data: # Update the data stored in `data` folder
 		data/*${DATE}.xml \
 		-o data/${DATE}.json
 	rm -rf data/*.xml
+
+serve: # Serve gh-pages for development
+	cd gh-pages && \
+	bundle exec jekyll serve --livereload
