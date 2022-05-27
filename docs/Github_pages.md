@@ -8,6 +8,9 @@ Follow [this official tutorial](https://jekyllrb.com/docs/)
 
 To see what I've done, at my time being and on my OS, see [installation traces](#installation-traces)
 
+## Jekyll
+
+Pages are powered using `Jekyll`. [Here](https://jekyllrb.com/docs/step-by-step/) is a step-by-step guide to learn Jekyll bases.
 
 # Traces
 
