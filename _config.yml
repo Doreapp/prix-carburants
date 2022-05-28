@@ -1,15 +1,11 @@
 # Jekyll configuration
-
 title: Prix Carburants
 author: Antoine Mandin
 email: doreapp.contact@gmail.com
 description: >-
-  [EN] A website to display statistics and raw information about french fuel prices.
-  [FR] Un site pour afficher des statistiques et informations sur les prix des carburants.
+  Un site pour afficher des statistiques et informations sur les prix des carburants.
 
-# twitter_username: jekyllrb
 github_username:  Doreapp
 github_repo: https://github.com/Doreapp/prix-carburants
 
-# Build settings
 theme: jekyll-theme-cayman
