@@ -2,7 +2,7 @@
  * Tools for data fetching
  */
 
- (() => {
+(() => {
     /**
      * Fetch of data about french fuel prices
      */
@@ -44,10 +44,17 @@
 
         /**
          * Get sample data from the repository
-         * @returns {Promise<XMLHttpRequest>}
+         * @returns {Promise}
          */
         getData() {
-            return this.getFile("data/20220526.json", "data")
+            return new Promise(
+                (resolve, reject) => {
+                    this.getFile("data/20220526.json", "data")
+                        .then(request => {
+                            resolve(JSON.parse(request.responseText))
+                        })
+                        .catch(err => reject(err))
+                })
         }
     }
     window["DataFetcher"] = DataFetcher
