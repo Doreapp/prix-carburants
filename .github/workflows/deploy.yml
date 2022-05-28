@@ -28,7 +28,7 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "doreapp@users.noreply.github.com"
           git diff
-          git commit -m "🚀 Deploy GitHub pages"
+          git commit -m "🚀 Deploy GitHub pages ($GITHUB_SHA)"
           git push
           echo "GitHub pages sources updated"
         else
