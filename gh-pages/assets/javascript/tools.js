@@ -2,7 +2,7 @@
  * Tools for data fetching
  */
 
-(() => {
+ (() => {
     /**
      * Fetch of data about french fuel prices
      */
