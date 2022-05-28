@@ -1,4 +1,4 @@
-# Wrokflow to update the data stored in `data` branch
+# Workflow to update the data stored in `data` branch
 name: Update data
 
 on:
