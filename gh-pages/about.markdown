@@ -9,7 +9,7 @@ This is an open-source website, hosted by GitHub.
 
 The source code is available [here](https://github.com/Doreapp/prix-carburants).
 
-It takes advantages of:
+It uses:
 - [GitHub pages](https://pages.github.com/)
 - [Jekyll](https://jekyllrb.com/)
 - [French open data](https://www.prix-carburants.gouv.fr/rubrique/opendata/)

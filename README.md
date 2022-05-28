@@ -1,7 +1,7 @@
 # Prix carburants
 
 Contains:
-- A python module to fetch fuel princes
+- A python module to fetch fuel prices.
 - A *Github-pages* website to display data about fuel prices.
 
 It uses french open data. See https://www.prix-carburants.gouv.fr/rubrique/opendata/ for details.
