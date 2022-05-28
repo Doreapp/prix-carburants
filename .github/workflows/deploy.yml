@@ -1,0 +1,38 @@
+# Workflow to deploy GitHub-pages website (in gh-pages)
+name: Deploy
+
+on:
+  push:
+    paths:
+      - 'gh-pages/**'
+  branches:
+    - 'main'
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Send files to gh-pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        mkdir ~/tmp
+        cp -r gh-pages/* ~/tmp
+        git fetch
+        git checkout gh-pages --
+        rm -rf *
+        cp -r ~/tmp/* .
+        git add *
+        if test -n "$( git status -s)"; then
+          echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
+          chmod 600 ~/.netrc
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "doreapp@users.noreply.github.com"
+          git diff
+          git commit -m "🚀 Deploy GitHub pages ($GITHUB_SHA)"
+          git push
+          echo "GitHub pages sources updated"
+        else
+          echo "No file to update"
+        fi

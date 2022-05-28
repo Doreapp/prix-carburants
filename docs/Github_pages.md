@@ -6,6 +6,13 @@ Pages for this repository take advantage of GitHub-integrated `Jekyll` build wor
 
 Follow [this official tutorial](https://jekyllrb.com/docs/)
 
+Then use:
+
+```
+cd gh-pages
+bundle install
+```
+
 To see what I've done, at my time being and on my OS, see [installation traces](#installation-traces)
 
 ## Jekyll
