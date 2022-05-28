@@ -1,10 +1,12 @@
-# Wrokflow to deploy GitHub-pages website (in gh-pages)
+# Workflow to deploy GitHub-pages website (in gh-pages)
 name: Deploy
 
-on: [push]
-#  push:
-#    paths:
-#      - 'gh-pages/**'
+on:
+  push:
+    paths:
+      - 'gh-pages/**'
+  branches:
+    - 'main'
 
 jobs:
   deployment:
