@@ -5,8 +5,8 @@ on:
   push:
     paths:
       - 'gh-pages/**'
-  branches:
-    - 'main'
+    branches:
+      - 'main'
 
 jobs:
   deployment:
