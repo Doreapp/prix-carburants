@@ -7,17 +7,13 @@
      * Fetch of data about french fuel prices
      */
     class DataFetcher {
-
-        constructor() {
-        }
-
         /**
          * Execute a GET HTTP request to given url
-         * @param {string} url
-         * @returns {Promise<XMLHttpRequest>} with HTTP request as parameter
+         * @param {string} url URL to send a GET request to
+         * @returns {Promise<XMLHttpRequest>}
          */
         get(url) {
-            console.log("GET to", url)
+            console.debug("GET to", url)
             return new Promise((resolve, reject) => {
                 const request = new XMLHttpRequest();
                 request.onreadystatechange = (_) => {
@@ -38,13 +34,18 @@
 
         /**
          * Get a single file from a specific branch of the repostory
-         * @param {*} pathToFile
+         * @param {string} pathToFile path to the file to fetch in the repo. e.g. README.md.
+         * @returns {Promise<XMLHttpRequest>}
          */
         getFile(pathToFile, ref = "main") {
             let url = "https://raw.githubusercontent.com/Doreapp/prix-carburants/" + ref + "/" + pathToFile
             return this.get(url)
         }
 
+        /**
+         * Get sample data from the repository
+         * @returns {Promise<XMLHttpRequest>}
+         */
         getData() {
             return this.getFile("data/20220526.json", "data")
         }

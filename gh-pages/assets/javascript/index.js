@@ -7,7 +7,7 @@
     new DataFetcher().getData()
     .then(data => {
         const salePoints = JSON.parse(data.responseText)
-        resultElement.innerText = "There are " + salePoints.length + " sale points."
+        resultElement.innerText = "Il y a " + salePoints.length + " points de vente."
     })
     .catch(_ => {
         console.log("Error fetching data from the repository")
