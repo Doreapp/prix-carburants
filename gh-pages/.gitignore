@@ -5,3 +5,13 @@ _site
 vendor
 
 Gemfile.lock
+
+# Node
+node_modules
+.eslintcache
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
