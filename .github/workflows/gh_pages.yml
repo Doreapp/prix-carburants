@@ -1,0 +1,17 @@
+# Github pages continuous integration
+name: GitHub pages Continuous Integration
+
+on:
+  push:
+    paths:
+      - 'gh-pages/assets/javascript/**'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install modules
+      run: cd gh-pages/ && npm install
+    - name: Lint Javascript
+      run: make js_lint
