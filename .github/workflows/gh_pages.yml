@@ -1,10 +1,10 @@
 # Github pages continuous integration
 name: GitHub pages Continuous Integration
 
-on: push
-  # push:
-  #   paths:
-  #     - 'gh-pages/**'
+on:
+  push:
+    paths:
+      - 'gh-pages/assets/javascript/**'
 
 jobs:
   lint:
