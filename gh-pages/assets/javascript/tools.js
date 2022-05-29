@@ -56,5 +56,3 @@ export class DataFetcher {
             })
     }
 }
-window["DataFetcher"] = DataFetcher
-
