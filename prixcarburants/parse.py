@@ -6,6 +6,8 @@ import json
 import logging
 import os
 import xml.etree.ElementTree as ET
+from datetime import datetime
+from enum import Enum
 from typing import List
 
 from .models import SalePoint
@@ -30,6 +32,12 @@ class ClassEncoder(json.JSONEncoder):
     """Encoder that handles custom classes"""
 
     def default(self, o):
+        if isinstance(o, set):
+            return list(o)
+        if isinstance(o, datetime):
+            return str(o)
+        if isinstance(o, Enum):
+            return o.value
         return o.__dict__
 
 
