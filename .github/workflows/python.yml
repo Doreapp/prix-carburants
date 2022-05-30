@@ -24,4 +24,4 @@ jobs:
         pip install -r requirements-dev.txt
     - name: Linter analysis
       run: |
-        make lint
+        make py_lint
