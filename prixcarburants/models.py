@@ -101,8 +101,9 @@ class WorkDay:
         opening_hours = []
         for hours in element:
             assert hours.tag == "horaire"
-            hours = tuple([hour(hours.get("ouverture")), hour(hours.get("fermeture"))])
-            opening_hours.append(hours)
+            start_hour = (hour(hours.get("ouverture")),)
+            end_hour = hour(hours.get("fermeture"))
+            opening_hours.append((start_hour, end_hour))
         return WorkDay(day, closed, opening_hours)
 
 
