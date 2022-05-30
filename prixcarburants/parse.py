@@ -10,7 +10,7 @@ from datetime import datetime
 from enum import Enum
 from typing import List
 
-from .models import SalePoint
+from .models import FuelType, SalePoint, WeekDay
 
 LOGGER = logging.getLogger(os.path.basename(__file__))
 
@@ -26,6 +26,34 @@ def build_sale_points(filename: str) -> List[SalePoint]:
         tree = ET.parse(stream)
     root = tree.getroot()
     return [SalePoint.build(element) for element in root]
+
+
+def degrade_to_latest(sale_points: List[SalePoint]) -> dict:
+    """
+    Degrade sales points to keep only meaningful latest data.
+    """
+
+    def degrade(sale_point: SalePoint) -> dict:
+        """Degrade a single sale point"""
+        prices = {}
+        for key, values in sale_point.prices.items():
+            if len(values) > 0:
+                prices[key] = max(values, key=lambda value: value[1])  # Newer
+        return {
+            "id": sale_point.id,
+            "lat": sale_point.location.latitude,
+            "lng": sale_point.location.longitude,
+            "address": sale_point.address.address,
+            "postcode": sale_point.address.postcode,
+            "city": sale_point.address.city,
+            "prices": prices,
+        }
+
+    return {
+        "week_days": {day.value: day.name for day in WeekDay},
+        "fuel_types": {type.value: type.name for type in FuelType},
+        "sale_points": [degrade(sale_point) for sale_point in sale_points],
+    }
 
 
 class ClassEncoder(json.JSONEncoder):

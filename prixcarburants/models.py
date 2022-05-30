@@ -101,8 +101,9 @@ class WorkDay:
         opening_hours = []
         for hours in element:
             assert hours.tag == "horaire"
-            hours = tuple([hour(hours.get("ouverture")), hour(hours.get("fermeture"))])
-            opening_hours.append(hours)
+            start_hour = (hour(hours.get("ouverture")),)
+            end_hour = hour(hours.get("fermeture"))
+            opening_hours.append((start_hour, end_hour))
         return WorkDay(day, closed, opening_hours)
 
 
@@ -185,7 +186,7 @@ class SalePoint:  # pylint: disable=too-many-instance-attributes
             elif child.tag == "prix":
                 if len(child.attrib) > 0:
                     fuel_type, date, price = parse_price(child)
-                    prices[fuel_type.value] = (date, price)
+                    prices[fuel_type.value].append((date, price))
             elif child.tag == "services":
                 services = parse_services(child)
             elif child.tag == "horaires":
