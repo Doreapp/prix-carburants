@@ -71,6 +71,12 @@ def build_cli_parser() -> argparse.ArgumentParser:
         "with the same name but as a JSON file.",
         default=None,
     )
+    transform_subparser.add_argument(
+        "-l",
+        "--latest",
+        help="degrade saved data to latest. Only save meaningful data about current state",
+        action="store_true",
+    )
     return parser
 
 
@@ -92,13 +98,15 @@ def main(cli: Optional[List[str]] = None):
         result = functions[arguments.type]()
         print(result)
     elif arguments.command == "transform":
-        sales_points = parse.build_sale_points(arguments.file)
+        sale_points = parse.build_sale_points(arguments.file)
         output = arguments.output
         if output is None:
             directory = os.path.dirname(arguments.file)
             filename = os.path.splitext(os.path.basename(arguments.file))[0]
             output = os.path.join(directory, filename + ".json")
-        parse.save_as_json(sales_points, output)
+        if arguments.latest:
+            sale_points = parse.degrade_to_latest(sale_points)
+        parse.save_as_json(sale_points, output)
         print(output)
     else:
         parser.print_help()
