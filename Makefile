@@ -25,6 +25,12 @@ js_setup: # Setup dependencies for JS code
 	cd ${GITHUB_PAGES_DIR} && \
 		curl -X GET https://cdn.plot.ly/plotly-2.12.1.min.js \
 		> assets/javascript/vendor/plotly.js
+	cd ${GITHUB_PAGES_DIR} && \
+		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.css \
+		> assets/css/vendor/leaflet.css
+	cd ${GITHUB_PAGES_DIR} && \
+		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.js \
+		> assets/javascript/vendor/leaflet.js
 
 js_format: # Run eslint to format JS code
 	${ESLINT} assets/javascript/ --fix
