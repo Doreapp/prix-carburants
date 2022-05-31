@@ -2,6 +2,10 @@
 
 A website to display statistics and information about french fuel prices.
 
-<p id="statistics">Stats</p>
-
-<script src="./assets/javascript/index.js" type="module"></script>
+{% for price in site.data.metrics.averages %}
+{% assign type_index = price[0] %}
+  <li>
+      {{ site.data.fuel_names[type_index] }}:
+      {{ price[1] }}
+  </li>
+{% endfor %}
