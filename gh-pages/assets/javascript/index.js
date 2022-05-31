@@ -27,6 +27,14 @@ function plotData() {
         maxZoom: 19,
         attribution: "© OpenStreetMap"
     }).addTo(map)
+    fetch("./assets/geojson/french_departments.json")
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            console.log(data)
+            L.geoJson(data.features).addTo(map)
+        })
 }
 
 
