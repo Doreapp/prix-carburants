@@ -42,13 +42,13 @@ export class DataFetcher {
     }
 
     /**
-     * Get sample data from the repository
+     * Get latest data from the repository
      * @returns {Promise}
      */
-    getData() {
+    getLatest() {
         return new Promise(
             (resolve, reject) => {
-                this.getFile("data/20220526.json", "data")
+                this.getFile("data/latest.json", "data")
                     .then(request => {
                         resolve(JSON.parse(request.responseText))
                     })
