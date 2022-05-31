@@ -6,7 +6,7 @@ on:
     # Run every day at 00:42
     - cron:  '42 0 * * *'
     # Every hour at 42th minute
-    - cron:  '42 1-24 * * *'
+    - cron:  '42 1-23 * * *'
 
 jobs:
   update-data:
