@@ -104,6 +104,8 @@ def main(cli: Optional[List[str]] = None):
             directory = os.path.dirname(arguments.file)
             filename = os.path.splitext(os.path.basename(arguments.file))[0]
             output = os.path.join(directory, filename + ".json")
+        else:
+            directory = os.path.dirname(output)
         if arguments.latest:
             sale_points = parse.degrade_to_latest(sale_points)
             parse.save_as_json(sale_points["metrics"], os.path.join(directory, "metrics.json"))
