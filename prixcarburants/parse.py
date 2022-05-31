@@ -28,6 +28,20 @@ def build_sale_points(filename: str) -> List[SalePoint]:
     return [SalePoint.build(element) for element in root]
 
 
+def _latest_metrics(latest_sale_points: List[dict]) -> dict:
+    """Build metrics about latest sale points"""
+    prices = {key.value: [0, 0] for key in FuelType}
+    for sale_point in latest_sale_points:
+        for key, (_, price) in sale_point["prices"].items():
+            prices[key][0] += price
+            prices[key][1] += 1
+    return {
+        "sums": {key: price for key, (price, _) in prices.items()},
+        "counts": {key: count for key, (_, count) in prices.items()},
+        "averages": {key: price / count for key, (price, count) in prices.items()},
+    }
+
+
 def degrade_to_latest(sale_points: List[SalePoint]) -> dict:
     """
     Degrade sales points to keep only meaningful latest data.
@@ -49,10 +63,12 @@ def degrade_to_latest(sale_points: List[SalePoint]) -> dict:
             "prices": prices,
         }
 
+    sale_points = [degrade(sale_point) for sale_point in sale_points]
     return {
+        "metrics": _latest_metrics(sale_points),
         "week_days": {day.value: day.name for day in WeekDay},
         "fuel_types": {type.value: type.name for type in FuelType},
-        "sale_points": [degrade(sale_point) for sale_point in sale_points],
+        "sale_points": sale_points,
     }
 
 
