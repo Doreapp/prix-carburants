@@ -1,27 +1,29 @@
-
+/**
+ * Utilities
+ */
 
 /**
- * Transform prices and names maps in a single array.
- * @param {Map<String, Number>} prices fuel type to price
- * @param {Map<String, String>} names fuel type to fuel name
+ * Transform prices and names in a single array.
+ * @param {Map<String, Number>} prices Map fuel_type to price
+ * @param {Map<String, String>} names Map fuel_type to fuel_name
  * @returns {Array<Map>} List of objects with ``name`` and ``price`` attributes
  */
-export function mapPricesToNames(prices, names){
+export function mapPricesToNames(prices, names) {
     let result = []
     for (let type in prices) {
-        result.push({name: names[type], price: prices[type]})
+        result.push({ name: names[type], price: prices[type] })
     }
     return result
 }
 
 /**
- * Populate a Table element with value from the array.
- * For example an array ``[["A", 1], ["B", 2]]`` will result in a table like:
+ * Populate a Table element with the values from the array.
+ * For example, an array ``[["A", 1], ["B", 2]]`` will result in a table like:
  * ```
  *  | A | 1 |
  *  | B | 2 |
  * ```
- * @param {String} tableQuery Query to find the DOM element, such as ``table#myTable``
+ * @param {String} tableQuery Query to find the DOM element, such as ``table#myTable``.
  * @param {Array<Array>} array 2D array. First index defines the row, second one the column.
  */
 export function populateTable(tableQuery, array) {
@@ -37,4 +39,4 @@ export function populateTable(tableQuery, array) {
     })
 }
 
-export default {mapPricesToNames, populateTable}
+export default { mapPricesToNames, populateTable }
