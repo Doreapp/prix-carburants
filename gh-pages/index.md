@@ -1,7 +1,29 @@
 # Prix carburants
 
-A website to display statistics and information about french fuel prices.
+Voici des statistiques à propos des carburants, en France.
 
-<p id="statistics">Stats</p>
+## Prix moyens
 
-<script src="./assets/javascript/index.js" type="module"></script>
+Les prix moyens, par carburants, dans l'ensemble de la France :
+
+<table id="averages">
+  <tr>
+    <th>Carburant</th>
+    <th>Prix</th>
+  </tr>
+</table>
+
+<script type="module">
+  import utils from "./assets/javascript/utils.js";
+
+  // constants from site's data
+  const metrics = {{ site.data.metrics | jsonify }}
+  const fuelNames = {{ site.data.fuel_names | jsonify }}
+
+  let averages = utils.mapPricesToNames(metrics.averages, fuelNames)
+  averages = averages.sort((obj1, obj2) => obj2.price - obj1.price) // by descending price
+  utils.populateTable(
+    "table#averages",
+    averages.map(value => [value.name, value.price.toFixed(2) + " €"])
+  )
+</script>
