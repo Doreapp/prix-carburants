@@ -1,5 +1,5 @@
 import utils from "./utils.js"
-import "./vendors/plotly.js"
+import "./vendor/plotly.js"
 
 /**
  * Populate the table containing prices averages

@@ -20,6 +20,11 @@ py_lint: # Check Python code with isort, black and pylint to identify any proble
 	${PYTHON} -m black --line-length ${LINE_LENGTH} --check ${PROJECT_NAME}/* *.py
 	${PYTHON} -m pylint ${PROJECT_NAME}/*
 
+js_setup: # Setup dependencies for JS code
+	mkdir -p ${GITHUB_PAGES_DIR}/assets/javascript/vendor/
+	cd ${GITHUB_PAGES_DIR} && \
+		curl -X GET https://cdn.plot.ly/plotly-2.12.1.min.js \
+		> assets/javascript/vendor/plotly.js
 
 js_format: # Run eslint to format JS code
 	${ESLINT} assets/javascript/ --fix
