@@ -13,17 +13,13 @@ Les prix moyens, par carburants, dans l'ensemble de la France :
   </tr>
 </table>
 
-<script type="module">
-  import utils from "./assets/javascript/utils.js";
+<div id="tester"></div>
 
+<script type="module">
   // constants from site's data
   const metrics = {{ site.data.metrics | jsonify }}
   const fuelNames = {{ site.data.fuel_names | jsonify }}
 
-  let averages = utils.mapPricesToNames(metrics.averages, fuelNames)
-  averages = averages.sort((obj1, obj2) => obj2.price - obj1.price) // by descending price
-  utils.populateTable(
-    "table#averages",
-    averages.map(value => [value.name, value.price.toFixed(2) + " €"])
-  )
+  import main from "./assets/javascript/index.js"
+  main(metrics, fuelNames)
 </script>
