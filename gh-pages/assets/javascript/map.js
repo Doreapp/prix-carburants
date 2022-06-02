@@ -16,6 +16,25 @@ class Highlighter {
     constructor(map, geojson) {
         this.geojson = geojson
         this.map = map
+        this.info = L.control()
+        this.info.onAdd = function () {
+            this._div = L.DomUtil.create("div", "info")
+            this.update()
+            return this._div
+        }
+        this.info.update = function (props) {
+            let html = "<h4>Prix du SP95</h4>"
+            if (props) {
+                html += "<b>Department</b>: " + props.nom + " (" + props.code+")" + "<br />"
+                for (let title in props.info) {
+                    html += "<b>"+title+"</b>: " + props.info[title] + "<br />"
+                }
+            } else {
+                html += "Hover over a state"
+            }
+            this._div.innerHTML = html
+        }
+        this.info.addTo(map)
     }
 
     /**
@@ -32,6 +51,7 @@ class Highlighter {
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront()
         }
+        this.info.update(layer.feature.properties)
     }
 
     /**
@@ -40,6 +60,7 @@ class Highlighter {
      */
     resetHighlight(e) {
         this.geojson.resetStyle(e.target)
+        this.info.update()
     }
 
     /**
@@ -51,7 +72,28 @@ class Highlighter {
     }
 }
 
-
+/**
+ * Add a legend showing which color correspond to which value
+ * @param {object} map Leaflet map object
+ * @param {number} scope Values scope (i.e. max-min)
+ * @param {number} min Values minimum value
+ */
+function addColorsLegend(map, scope, min) {
+    let legend = L.control({position: "bottomright"})
+    const step = scope/COLORS.length
+    legend.onAdd = function () {
+        let div = L.DomUtil.create("div", "info legend")
+        for (let i = 0; i < COLORS.length; i++) {
+            let start = min + i*step
+            let end = start + step
+            div.innerHTML +=
+                "<i style=\"background:" + COLORS[i] + "\"></i> " +
+                start.toFixed(2) + " &ndash; " + end.toFixed(2) + "<br>"
+        }
+        return div
+    }
+    legend.addTo(map)
+}
 
 
 /**
@@ -83,6 +125,7 @@ export function displayFrenchMap(values) {
                     min = Math.min(min, value.value)
                     feature.properties.value = value.value
                 }
+                feature.properties.info = value.info
             }
             const scope = max - min, size = COLORS.length - 1
             function getColor(value) {
@@ -116,6 +159,7 @@ export function displayFrenchMap(values) {
                     }
                 }
             ).addTo(map)
+            addColorsLegend(map, scope, min)
         })
 }
 

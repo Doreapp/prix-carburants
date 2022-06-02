@@ -27,7 +27,7 @@ function displayAveragesMap(averages) {
         } else {
             values[department] =  {
                 value: price,
-                info: {"Price": price}
+                info: {"Prix": price.toFixed(2) + "€"}
             }
         }
     }
