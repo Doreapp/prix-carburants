@@ -6,6 +6,55 @@ const L = window["L"]
 const COLORS = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"]
 
 /**
+ * Class to highlight some part of a map
+ */
+class Highlighter {
+    /**
+     * @param {object} map Leaflet map object
+     * @param {object} geojson Leaflet geojson object
+     */
+    constructor(map, geojson) {
+        this.geojson = geojson
+        this.map = map
+    }
+
+    /**
+     * Highlight the feature ``e.target``.
+     * @param {*} e Event
+     */
+    highlightFeature(e) {
+        var layer = e.target
+        layer.setStyle({
+            weight: 5,
+            dashArray: "",
+            fillOpacity: 0.9
+        })
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront()
+        }
+    }
+
+    /**
+     * Reset the highlight of the feature ``e.target``.
+     * @param {*} e event
+     */
+    resetHighlight(e) {
+        this.geojson.resetStyle(e.target)
+    }
+
+    /**
+     * Zoom on the feature ``e.target``.
+     * @param {*} e event
+     */
+    zoomToFeature(e) {
+        this.map.fitBounds(e.target.getBounds())
+    }
+}
+
+
+
+
+/**
  * Plot sample data
  * @param {object} values object, linking a department code (as an integer) to values.
  *  The value object should look like {value: 123, info: {toto: "tata", ...}}.
@@ -36,13 +85,11 @@ export function displayFrenchMap(values) {
                 }
             }
             const scope = max - min, size = COLORS.length - 1
-            console.log(max, min, scope, size)
             function getColor(value) {
                 if (value === undefined) {
                     return "grey"
                 }
                 const index = Math.floor((value - min) * size / scope)
-                console.log(value, index)
                 return COLORS[index]
             }
             function style(feature) {
@@ -55,7 +102,20 @@ export function displayFrenchMap(values) {
                     fillColor: getColor(feature.properties.value)
                 }
             }
-            L.geoJson(features, { "style": style }).addTo(map)
+            let highlighter = new Highlighter(map, undefined)
+            highlighter.geojson = L.geoJson(
+                features,
+                {
+                    "style": style,
+                    onEachFeature: (feature, layer) => {
+                        layer.on({
+                            mouseover: e => highlighter.highlightFeature(e),
+                            mouseout: e => highlighter.resetHighlight(e),
+                            click: e => highlighter.zoomToFeature(e)
+                        })
+                    }
+                }
+            ).addTo(map)
         })
 }
 
