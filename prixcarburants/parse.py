@@ -13,6 +13,7 @@ from typing import List
 from .models import FuelType, SalePoint, WeekDay
 
 LOGGER = logging.getLogger(os.path.basename(__file__))
+DEPARTMENTS = list(range(1, 96))
 
 
 def build_sale_points(filename: str) -> List[SalePoint]:
@@ -32,22 +33,36 @@ def build_metrics(sale_points: List[dict]) -> dict:
     """
     Extract metrics from latest ``sale_points``
     """
-    prices = {fuel_type.value: [0, 0] for fuel_type in FuelType}
+    prices = {
+        department: {fuel_type.value: [0, 0] for fuel_type in FuelType}
+        for department in DEPARTMENTS
+    }
+    prices["total"] = {fuel_type.value: [0, 0] for fuel_type in FuelType}
     for sale_point in sale_points:
-        for key, (_, price) in sale_point["prices"].items():
-            prices[key][0] += price
-            prices[key][1] += 1
-    averages = {}
-    counts = {}
-    totals = {}
-    for fuel_type, (total, count) in prices.items():
-        counts[fuel_type] = count
-        if count == 0:
-            averages[fuel_type] = -1
-            totals[fuel_type] = -1
-        else:
-            averages[fuel_type] = total / count
-            totals[fuel_type] = total
+        for fuel_type, (_, price) in sale_point["prices"].items():
+            prices["total"][fuel_type][0] += price
+            prices["total"][fuel_type][1] += 1
+            department = int(sale_point["postcode"][:2])
+            prices[department][fuel_type][0] += price
+            prices[department][fuel_type][1] += 1
+    averages = {
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in DEPARTMENTS
+    }
+    counts = {
+        department: {fuel_type.value: 0 for fuel_type in FuelType} for department in DEPARTMENTS
+    }
+    totals = {
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in DEPARTMENTS
+    }
+    averages["total"] = {fuel_type.value: -1 for fuel_type in FuelType}
+    counts["total"] = {fuel_type.value: 0 for fuel_type in FuelType}
+    totals["total"] = {fuel_type.value: -1 for fuel_type in FuelType}
+    for department, sub_prices in prices.items():
+        for fuel_type, (total, count) in sub_prices.items():
+            counts[department][fuel_type] = count
+            if count != 0:
+                averages[department][fuel_type] = total / count
+                totals[department][fuel_type] = total
     return {
         "metrics": {
             "averages": averages,
@@ -56,7 +71,6 @@ def build_metrics(sale_points: List[dict]) -> dict:
         },
         "week_days": {day.value: day.name for day in WeekDay},
         "fuel_types": {type.value: type.name for type in FuelType},
-        "sale_points": sale_points,
     }
 
 
