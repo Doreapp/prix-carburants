@@ -1,5 +1,5 @@
 import utils from "./utils.js"
-import map from "./map.js"
+import { FrenchMap } from "./map.js"
 
 /**
  * Populate the table containing prices averages
@@ -15,10 +15,16 @@ function populateAveragesTable(averages, fuelNames) {
     )
 }
 
-function displayAveragesMap(averages) {
+/**
+ * Build values usable as input for the Map Visualization
+ * @param {object} averages price averages by department and fuel type
+ * @param {number} fuelType identifier of the fuel type to extract prices from
+ * @returns values usable in ``FrenchMap.setValues()`` function
+ */
+function buildMapValues(averages, fuelType) {
     let values = {}
     for (const department in averages) {
-        const price = averages[department]["2"]
+        const price = averages[department][fuelType]
         if (price < 0) {
             values[department] =  {
                 value: undefined,
@@ -31,7 +37,27 @@ function displayAveragesMap(averages) {
             }
         }
     }
-    map.displayFrenchMap(values)
+    return values
+}
+
+/**
+ * Build the french map and additional elements
+ * @param {object} rawFuelTypes fuel types from identifier to name
+ * @param {object} averages prices average from department to fuelType to price average
+ */
+function buildFrenchMap(rawFuelTypes, averages) {
+    let fuelTypes = []
+    let inverseMap = {}
+    let map = new FrenchMap()
+    for(let key in rawFuelTypes) {
+        const name = rawFuelTypes[key]
+        fuelTypes.push(name)
+        inverseMap[name.toLowerCase()] = key
+    }
+    utils.buildSelector("#selector", fuelTypes, e => {
+        const fuelName = e.target.innerText
+        map.setValues(buildMapValues(averages, inverseMap[fuelName.toLowerCase()]))
+    })
 }
 
 /**
@@ -43,8 +69,8 @@ function main() {
             return response.json()
         })
         .then(metrics => {
+            buildFrenchMap(metrics.fuel_types, metrics.metrics.averages)
             populateAveragesTable(metrics.metrics.averages.total, metrics.fuel_types)
-            displayAveragesMap(metrics.metrics.averages)
         })
         .catch(error => {
             console.error("Unable to fetch data", error)
