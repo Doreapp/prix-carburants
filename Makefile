@@ -4,7 +4,7 @@ LINE_LENGTH=100
 GITHUB_PAGES_DIR=gh-pages
 ESLINT=cd ${GITHUB_PAGES_DIR} && npx eslint
 
-all: format lint
+all: py_format py_lint js_format js_lint
 
 clean: # Removed all generated files
 	@rm -rf *.dist-info *.egg-info
