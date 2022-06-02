@@ -56,6 +56,7 @@ update-latest-data: # Update the latest data stored in `data` folder
 	@echo "> Transforming it in JSON format"
 	${PYTHON} -m prixcarburants transform \
 		--latest \
+		--metrics \
 		data/*.xml \
 		-o data/latest.json
 	rm -rf data/*.xml
