@@ -28,48 +28,60 @@ def build_sale_points(filename: str) -> List[SalePoint]:
     return [SalePoint.build(element) for element in root]
 
 
-def _latest_metrics(latest_sale_points: List[dict]) -> dict:
-    """Build metrics about latest sale points"""
-    prices = {key.value: [0, 0] for key in FuelType}
-    for sale_point in latest_sale_points:
+def build_metrics(sale_points: List[dict]) -> dict:
+    """
+    Extract metrics from latest ``sale_points``
+    """
+    prices = {fuel_type.value: [0, 0] for fuel_type in FuelType}
+    for sale_point in sale_points:
         for key, (_, price) in sale_point["prices"].items():
             prices[key][0] += price
             prices[key][1] += 1
+    averages = {}
+    counts = {}
+    totals = {}
+    for fuel_type, (total, count) in prices.items():
+        counts[fuel_type] = count
+        if count == 0:
+            averages[fuel_type] = -1
+            totals[fuel_type] = -1
+        else:
+            averages[fuel_type] = total / count
+            totals[fuel_type] = total
     return {
-        "sums": {key: price for key, (price, _) in prices.items()},
-        "counts": {key: count for key, (_, count) in prices.items()},
-        "averages": {key: price / count for key, (price, count) in prices.items()},
-    }
-
-
-def degrade_to_latest(sale_points: List[SalePoint]) -> dict:
-    """
-    Degrade sales points to keep only meaningful latest data.
-    """
-
-    def degrade(sale_point: SalePoint) -> dict:
-        """Degrade a single sale point"""
-        prices = {}
-        for key, values in sale_point.prices.items():
-            if len(values) > 0:
-                prices[key] = max(values, key=lambda value: value[1])  # Newer
-        return {
-            "id": sale_point.id,
-            "lat": sale_point.location.latitude,
-            "lng": sale_point.location.longitude,
-            "address": sale_point.address.address,
-            "postcode": sale_point.address.postcode,
-            "city": sale_point.address.city,
-            "prices": prices,
-        }
-
-    sale_points = [degrade(sale_point) for sale_point in sale_points]
-    return {
-        "metrics": _latest_metrics(sale_points),
+        "metrics": {
+            "averages": averages,
+            "counts": counts,
+            "totals": totals,
+        },
         "week_days": {day.value: day.name for day in WeekDay},
         "fuel_types": {type.value: type.name for type in FuelType},
         "sale_points": sale_points,
     }
+
+
+def degrade_to_latest(sale_points: List[SalePoint]) -> List[dict]:
+    """
+    Degrade sales points to keep only meaningful latest data.
+    """
+    results = []
+    for sale_point in sale_points:
+        prices = {}
+        for key, values in sale_point.prices.items():
+            if len(values) > 0:
+                prices[key] = max(values, key=lambda value: value[1])  # Newer
+        results.append(
+            {
+                "id": sale_point.id,
+                "lat": sale_point.location.latitude,
+                "lng": sale_point.location.longitude,
+                "address": sale_point.address.address,
+                "postcode": sale_point.address.postcode,
+                "city": sale_point.address.city,
+                "prices": prices,
+            }
+        )
+    return results
 
 
 class ClassEncoder(json.JSONEncoder):
