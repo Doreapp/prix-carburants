@@ -40,11 +40,19 @@ function plotData() {
 
 /**
  * Main function for index file
- * @param {object} metrics Fuel's metrics
- * @param {object} fuelNames Fuel's names
  */
-export default function main(metrics, fuelNames) {
-    populateAveragesTable(metrics.averages, fuelNames)
-
-    plotData()
+function main() {
+    fetch("./assets/data/metrics.json")
+        .then(response => {
+            return response.json()
+        })
+        .then(metrics => {
+            populateAveragesTable(metrics.metrics.averages.total, metrics.fuel_types)
+            plotData()
+        })
+        .catch(error => {
+            console.error("Unable to fetch data", error)
+        })
 }
+
+main()

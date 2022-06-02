@@ -16,11 +16,4 @@ Les prix moyens, par carburants, dans l'ensemble de la France :
 <div id="map" style="height: 50em; width: 100%;"></div>
 
 <link rel="stylesheet" href="./assets/css/vendor/leaflet.css" />
-<script type="module">
-  // constants from site's data
-  const metrics = {{ site.data.metrics | jsonify }}
-  const fuelNames = {{ site.data.fuel_names | jsonify }}
-
-  import main from "./assets/javascript/index.js"
-  main(metrics, fuelNames)
-</script>
+<script type="module" src="./assets/javascript/index.js"></script>
