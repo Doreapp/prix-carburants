@@ -22,6 +22,7 @@ py_lint: # Check Python code with isort, black and pylint to identify any proble
 
 js_setup: # Setup dependencies for JS code
 	mkdir -p ${GITHUB_PAGES_DIR}/assets/javascript/vendor/
+	mkdir -p ${GITHUB_PAGES_DIR}/assets/css/vendor/
 	cd ${GITHUB_PAGES_DIR} && \
 		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.css \
 		> assets/css/vendor/leaflet.css && \
