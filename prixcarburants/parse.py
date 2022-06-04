@@ -37,26 +37,27 @@ def build_metrics(sale_points: List[dict]) -> dict:
         department: {fuel_type.value: [0, 0] for fuel_type in FuelType}
         for department in DEPARTMENTS
     }
-    prices["total"] = {fuel_type.value: [0, 0] for fuel_type in FuelType}
     for sale_point in sale_points:
         for fuel_type, (_, price) in sale_point["prices"].items():
-            prices["total"][fuel_type][0] += price
-            prices["total"][fuel_type][1] += 1
             department = int(sale_point["postcode"][:2])
             prices[department][fuel_type][0] += price
             prices[department][fuel_type][1] += 1
+    prices["total"] = {
+        fuel_type.value: [
+            sum(prices[department][fuel_type.value][0] for department in DEPARTMENTS),
+            sum(prices[department][fuel_type.value][1] for department in DEPARTMENTS),
+        ]
+        for fuel_type in FuelType
+    }
+    all_keys = ["total"]
+    all_keys.extend(DEPARTMENTS)
     averages = {
-        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in DEPARTMENTS
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in all_keys
     }
-    counts = {
-        department: {fuel_type.value: 0 for fuel_type in FuelType} for department in DEPARTMENTS
-    }
+    counts = {department: {fuel_type.value: 0 for fuel_type in FuelType} for department in all_keys}
     totals = {
-        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in DEPARTMENTS
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in all_keys
     }
-    averages["total"] = {fuel_type.value: -1 for fuel_type in FuelType}
-    counts["total"] = {fuel_type.value: 0 for fuel_type in FuelType}
-    totals["total"] = {fuel_type.value: -1 for fuel_type in FuelType}
     for department, sub_prices in prices.items():
         for fuel_type, (total, count) in sub_prices.items():
             counts[department][fuel_type] = count
