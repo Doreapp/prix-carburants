@@ -4,7 +4,8 @@ Voici des statistiques à propos des carburants, en France.
 
 ## Prix moyens
 
-Les prix moyens, par carburants, dans l'ensemble de la France :
+### Sur l'ensemble de la France
+
 
 <table id="averages">
   <tr>
@@ -13,9 +14,10 @@ Les prix moyens, par carburants, dans l'ensemble de la France :
   </tr>
 </table>
 
-<br>
+### Par département
 
-<div id="selector" class="selector" style="width: 80%; display: flex;"></div>
+Choisi un carburant:
+<div id="selector" class="selector" style="width: 80%;"></div>
 
 <div id="map" style="height: 80vh; width: 80%;"></div>
 
