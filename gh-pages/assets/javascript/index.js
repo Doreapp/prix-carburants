@@ -3,8 +3,10 @@ import { FrenchMap } from "./map.js"
 
 /**
  * Populate the table containing prices averages
- * @param {Map<string, number>} averages Map from fuel_type to price
- * @param {Map<string, string>} fuelNames Map from fuel_type to fuel_name
+ * @param {object} averages Object containing ``price`` by ``fuel type``.
+ *  i.e. ``{"1": 2.01234, "2": ...}``
+ * @param {object} fuelNames Object containing ``fuel name`` by ``fuel type``.
+ *  i.e. ``{"1": "SP95", "2": ...}``
  */
 function populateAveragesTable(averages, fuelNames) {
     let parsedAverages = utils.mapPricesToNames(averages, fuelNames)
@@ -17,7 +19,8 @@ function populateAveragesTable(averages, fuelNames) {
 
 /**
  * Build values usable as input for the Map Visualization
- * @param {object} averages price averages by department and fuel type
+ * @param {object} averages price averages by department and fuel type.
+ *  i.e. ``{"44": {"1": 2.123, "2": ...}, "45": {...}}``
  * @param {number} fuelType identifier of the fuel type to extract prices from
  * @returns values usable in ``FrenchMap.setValues()`` function
  */
@@ -28,7 +31,7 @@ function buildMapValues(averages, fuelType) {
         if (price < 0) {
             values[department] =  {
                 value: undefined,
-                info: {"Price": "No data"}
+                info: {"Prix": "Pas de donnée"}
             }
         } else {
             values[department] =  {
@@ -42,8 +45,10 @@ function buildMapValues(averages, fuelType) {
 
 /**
  * Build the french map and additional elements
- * @param {object} rawFuelTypes fuel types from identifier to name
- * @param {object} averages prices average from department to fuelType to price average
+ * @param {object} rawFuelTypes fuel types from identifier to name.
+ *  i.e. ``{"1": "SP95", "2": ...}``
+ * @param {object} averages prices average from department to fuelType to price average.
+ *  i.e. ``{"44": {"1": 2.123, "2": ...}, "45": {...}}``
  */
 function buildFrenchMap(rawFuelTypes, averages) {
     let fuelTypes = []
@@ -61,7 +66,7 @@ function buildFrenchMap(rawFuelTypes, averages) {
 }
 
 /**
- * Main function for index file
+ * Main function for ``index.md`` file
  */
 function main() {
     fetch("./assets/data/metrics.json")
