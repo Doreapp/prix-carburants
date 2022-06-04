@@ -9,6 +9,13 @@ const L = window["L"]
 // Colors to display on the map. From Yellow to Red.
 const COLORS = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C", "#BD0026", "#800026"]
 
+// Map-related constants
+const MAP_CONSTANTS = {
+    center: [46.6309, 2.4527],
+    minZoom: 5,
+    maxZoom: 10
+}
+
 /**
  * Load a GeoJson of the french departments
  * @returns {Promise} a promise of a GeoJson
@@ -54,10 +61,10 @@ function createInfoElement(title=undefined) {
  */
 export class FrenchMap {
     constructor() {
-        this.map = L.map("map").setView([46.6309, 2.4527], 5)
+        this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 10,
-            minZoom: 5,
+            maxZoom: MAP_CONSTANTS.maxZoom,
+            minZoom: MAP_CONSTANTS.minZoom,
             attribution: "© OpenStreetMap"
         }).addTo(this.map)
         loadFrenchGeojson()
