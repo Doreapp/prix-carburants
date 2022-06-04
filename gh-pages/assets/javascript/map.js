@@ -65,7 +65,7 @@ export class FrenchMap {
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: MAP_CONSTANTS.maxZoom,
             minZoom: MAP_CONSTANTS.minZoom,
-            attribution: "© OpenStreetMap"
+            attribution:"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
         }).addTo(this.map)
         loadFrenchGeojson()
             .then(geojson => {
