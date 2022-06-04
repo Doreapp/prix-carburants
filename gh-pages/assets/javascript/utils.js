@@ -37,7 +37,6 @@ export function populateTable(tableQuery, array) {
         })
         tableElement.appendChild(rowElement)
     })
-    return tableElement
 }
 
 /**
