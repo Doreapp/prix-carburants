@@ -77,6 +77,12 @@ def build_cli_parser() -> argparse.ArgumentParser:
         help="degrade saved data to latest. Only save meaningful data about current state",
         action="store_true",
     )
+    transform_subparser.add_argument(
+        "-m",
+        "--metrics",
+        help="build metrics from transformed data",
+        action="store_true",
+    )
     return parser
 
 
@@ -108,7 +114,9 @@ def main(cli: Optional[List[str]] = None):
             directory = os.path.dirname(output)
         if arguments.latest:
             sale_points = parse.degrade_to_latest(sale_points)
-            parse.save_as_json(sale_points["metrics"], os.path.join(directory, "metrics.json"))
+        if arguments.metrics:
+            metrics = parse.build_metrics(sale_points)
+            parse.save_as_json(metrics, os.path.join(directory, "metrics.json"))
         parse.save_as_json(sale_points, output)
         print(output)
     else:

@@ -13,6 +13,7 @@ from typing import List
 from .models import FuelType, SalePoint, WeekDay
 
 LOGGER = logging.getLogger(os.path.basename(__file__))
+DEPARTMENTS = list(range(1, 96))
 
 
 def build_sale_points(filename: str) -> List[SalePoint]:
@@ -28,48 +29,74 @@ def build_sale_points(filename: str) -> List[SalePoint]:
     return [SalePoint.build(element) for element in root]
 
 
-def _latest_metrics(latest_sale_points: List[dict]) -> dict:
-    """Build metrics about latest sale points"""
-    prices = {key.value: [0, 0] for key in FuelType}
-    for sale_point in latest_sale_points:
-        for key, (_, price) in sale_point["prices"].items():
-            prices[key][0] += price
-            prices[key][1] += 1
+def build_metrics(sale_points: List[dict]) -> dict:
+    """
+    Extract metrics from latest ``sale_points``
+    """
+    prices = {
+        department: {fuel_type.value: [0, 0] for fuel_type in FuelType}
+        for department in DEPARTMENTS
+    }
+    for sale_point in sale_points:
+        for fuel_type, (_, price) in sale_point["prices"].items():
+            department = int(sale_point["postcode"][:2])
+            prices[department][fuel_type][0] += price
+            prices[department][fuel_type][1] += 1
+    prices["total"] = {
+        fuel_type.value: [
+            sum(prices[department][fuel_type.value][0] for department in DEPARTMENTS),
+            sum(prices[department][fuel_type.value][1] for department in DEPARTMENTS),
+        ]
+        for fuel_type in FuelType
+    }
+    all_keys = ["total"]
+    all_keys.extend(DEPARTMENTS)
+    averages = {
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in all_keys
+    }
+    counts = {department: {fuel_type.value: 0 for fuel_type in FuelType} for department in all_keys}
+    totals = {
+        department: {fuel_type.value: -1 for fuel_type in FuelType} for department in all_keys
+    }
+    for department, sub_prices in prices.items():
+        for fuel_type, (total, count) in sub_prices.items():
+            counts[department][fuel_type] = count
+            if count != 0:
+                averages[department][fuel_type] = total / count
+                totals[department][fuel_type] = total
     return {
-        "sums": {key: price for key, (price, _) in prices.items()},
-        "counts": {key: count for key, (_, count) in prices.items()},
-        "averages": {key: price / count for key, (price, count) in prices.items()},
+        "metrics": {
+            "averages": averages,
+            "counts": counts,
+            "totals": totals,
+        },
+        "week_days": {day.value: day.name for day in WeekDay},
+        "fuel_types": {type.value: type.name for type in FuelType},
     }
 
 
-def degrade_to_latest(sale_points: List[SalePoint]) -> dict:
+def degrade_to_latest(sale_points: List[SalePoint]) -> List[dict]:
     """
     Degrade sales points to keep only meaningful latest data.
     """
-
-    def degrade(sale_point: SalePoint) -> dict:
-        """Degrade a single sale point"""
+    results = []
+    for sale_point in sale_points:
         prices = {}
         for key, values in sale_point.prices.items():
             if len(values) > 0:
                 prices[key] = max(values, key=lambda value: value[1])  # Newer
-        return {
-            "id": sale_point.id,
-            "lat": sale_point.location.latitude,
-            "lng": sale_point.location.longitude,
-            "address": sale_point.address.address,
-            "postcode": sale_point.address.postcode,
-            "city": sale_point.address.city,
-            "prices": prices,
-        }
-
-    sale_points = [degrade(sale_point) for sale_point in sale_points]
-    return {
-        "metrics": _latest_metrics(sale_points),
-        "week_days": {day.value: day.name for day in WeekDay},
-        "fuel_types": {type.value: type.name for type in FuelType},
-        "sale_points": sale_points,
-    }
+        results.append(
+            {
+                "id": sale_point.id,
+                "lat": sale_point.location.latitude,
+                "lng": sale_point.location.longitude,
+                "address": sale_point.address.address,
+                "postcode": sale_point.address.postcode,
+                "city": sale_point.address.city,
+                "prices": prices,
+            }
+        )
+    return results
 
 
 class ClassEncoder(json.JSONEncoder):

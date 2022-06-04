@@ -4,7 +4,7 @@ LINE_LENGTH=100
 GITHUB_PAGES_DIR=gh-pages
 ESLINT=cd ${GITHUB_PAGES_DIR} && npx eslint
 
-all: format lint
+all: py_format py_lint js_format js_lint
 
 clean: # Removed all generated files
 	@rm -rf *.dist-info *.egg-info
@@ -20,6 +20,13 @@ py_lint: # Check Python code with isort, black and pylint to identify any proble
 	${PYTHON} -m black --line-length ${LINE_LENGTH} --check ${PROJECT_NAME}/* *.py
 	${PYTHON} -m pylint ${PROJECT_NAME}/*
 
+js_setup: # Setup dependencies for JS code
+	mkdir -p ${GITHUB_PAGES_DIR}/assets/javascript/vendor/
+	cd ${GITHUB_PAGES_DIR} && \
+		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.css \
+		> assets/css/vendor/leaflet.css && \
+		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.js \
+		> assets/javascript/vendor/leaflet.js
 
 js_format: # Run eslint to format JS code
 	${ESLINT} assets/javascript/ --fix
@@ -45,6 +52,7 @@ update-latest-data: # Update the latest data stored in `data` folder
 	@echo "> Transforming it in JSON format"
 	${PYTHON} -m prixcarburants transform \
 		--latest \
+		--metrics \
 		data/*.xml \
 		-o data/latest.json
 	rm -rf data/*.xml
