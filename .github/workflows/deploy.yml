@@ -3,8 +3,6 @@ name: Deploy
 
 on:
   push:
-    paths:
-      - 'gh-pages/**'
     branches:
       - 'main'
 
@@ -22,7 +20,7 @@ jobs:
         git fetch
         git checkout gh-pages --
         rm -rf * && cp -r ~/tmp/* .
-        echo "!vendor" >> gh-pages/.gitignore
+        echo "!vendor" >> .gitignore
         git add *
         if test -n "$( git status -s)"; then
           echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
