@@ -32,6 +32,13 @@ def build_cli_parser() -> argparse.ArgumentParser:
         epilog="Built by Antoine MANDIN",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
+    parser.add_argument(
+        "-l",
+        "--level",
+        help="log level",
+        choices=("debug", "info", "warning", "error"),
+        default="warning",
+    )
     subparsers = parser.add_subparsers(
         title="command", description="Program command", dest="command"
     )
@@ -93,6 +100,7 @@ def main(cli: Optional[List[str]] = None):
     """
     parser = build_cli_parser()
     arguments = parser.parse_args(cli)
+    logging.basicConfig(level=logging.getLevelName(arguments.level.upper()))
     if arguments.command == "download":
         LOGGER.debug("'download' command")
         data_fetcher = DataFechter(arguments.output)
