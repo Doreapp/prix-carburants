@@ -43,10 +43,10 @@ def build_cli_parser() -> argparse.ArgumentParser:
     download_subparser.add_argument(
         "type",
         help="Type of data to download. "
-        "[instantaneous]: most recent data, "
+        "[now]: most recent data, "
         "[day]: today's data, "
         "[year]: current year's data.",
-        choices=("instantaneous", "day", "year"),
+        choices=("now", "day", "year"),
     )
     download_subparser.add_argument(
         "-o",
@@ -97,7 +97,7 @@ def main(cli: Optional[List[str]] = None):
         LOGGER.debug("'download' command")
         data_fetcher = DataFechter(arguments.output)
         functions = {
-            "instantaneous": data_fetcher.download_instantaneous_data,
+            "now": data_fetcher.download_instantaneous_data,
             "day": data_fetcher.download_day_data,
             "year": data_fetcher.download_year_data,
         }

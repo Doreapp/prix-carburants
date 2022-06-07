@@ -38,7 +38,7 @@ js_lint: # Run eslint to check JS code lint
 update-latest-data: # Update the latest data stored in `data` folder
 	rm -rf data
 	@echo "> Downloading raw data"
-	${PYTHON} -m prixcarburants download instantaneous -o data
+	${PYTHON} -m prixcarburants download now -o data
 	@echo "> Transforming it in JSON format"
 	${PYTHON} -m prixcarburants transform \
 		--latest \
