@@ -43,12 +43,12 @@ function createInfoElement(title=undefined) {
             html += "<h4>" + title + "</h4>"
         }
         if (props) {
-            html += "<b>Department</b>: " + props.nom + " (" + props.code + ")" + "<br />"
+            html += "<b>Département</b>: " + props.nom + " (" + props.code + ")" + "<br />"
             for (let title in props.info) {
                 html += "<b>" + title + "</b>: " + props.info[title] + "<br />"
             }
         } else {
-            html += "Hover over a state"
+            html += "Survolez un département"
         }
         this._div.innerHTML = html
     }
