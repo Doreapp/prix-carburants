@@ -2,6 +2,8 @@
 
 Voici des statistiques à propos des carburants, en France.
 
+<a href="./sale_points" class="btn">Voir la carte des points de vente</a>
+
 ## Prix moyens
 
 ### Sur l'ensemble de la France
