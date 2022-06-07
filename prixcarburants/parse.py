@@ -66,7 +66,8 @@ def build_metrics(sale_points: List[dict]) -> dict:
             else:
                 averages[department][fuel_type] = price / counts[department][fuel_type]
     return {
-        "metrics": {"averages": averages, "counts": counts},
+        "averages": averages,
+        "counts": counts,
         "fuel_types": [type.name for type in FuelType],
     }
 
