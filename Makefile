@@ -35,17 +35,6 @@ js_format: # Run eslint to format JS code
 js_lint: # Run eslint to check JS code lint
 	${ESLINT} assets/javascript/
 
-update-daily-data: # Update the daily data stored in `data` folder
-	$(eval DATE := $(shell date --date="yesterday" +%Y%m%d))
-	rm -rf data
-	@echo "> Downloading raw data"
-	${PYTHON} -m prixcarburants download day -o data
-	@echo "> Transforming it in JSON format"
-	${PYTHON} -m prixcarburants transform \
-		data/*${DATE}.xml \
-		-o data/${DATE}.json
-	rm -rf data/*.xml
-
 update-latest-data: # Update the latest data stored in `data` folder
 	rm -rf data
 	@echo "> Downloading raw data"

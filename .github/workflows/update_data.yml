@@ -1,12 +1,10 @@
-# Workflow to update the data stored in `data` branch
+# Workflow to update the data displayed
 name: Update data
 
 on:
   schedule:
-    # Run every day at 00:42
-    - cron:  '42 0 * * *'
     # Every hour at 42th minute
-    - cron:  '42 1-23 * * *'
+    - cron:  '42 * * * *'
 
 jobs:
   update-data:
@@ -21,38 +19,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Update daily data
-      if: github.event.schedule == '42 0 * * *'
-      run: |
-        make update-daily-data
-        mkdir -p ~/tmp/ && mv data/* ~/tmp/
     - name: Update latest data
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         make update-latest-data
         mkdir -p ~/tmp/ && mv data/* ~/tmp/
-    - name: Upload data
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git fetch && git checkout data --
-        cp -f ~/tmp/* data/
-        git add data/
-        if test -n "$( git status -s)"; then
-          echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
-          chmod 600 ~/.netrc
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "doreapp@users.noreply.github.com"
-          git diff
-          git commit -m "⬆️ Update data"
-          git push
-          echo "Data pushed to data branch"
-        else
-          echo "No data to update"
-        fi
-    - name: Update site data
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
         git fetch && git checkout gh-pages --
         cp -f ~/tmp/metrics.json assets/data/
         git add assets/data/
