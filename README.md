@@ -73,4 +73,4 @@ The actual sources used are in `gh-pages` branch.
 
 ## Data
 
-Up-to-date data in stored in `data` branch of this repository and updated frequently.
+The data displayed by [Github-pages website](#github-pages-website) is stored under `assets/data/` directory in `gh-pages` branch.
