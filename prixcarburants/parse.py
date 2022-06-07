@@ -13,7 +13,7 @@ from typing import Dict, List
 from .models import FuelType, SalePoint
 
 LOGGER = logging.getLogger(os.path.basename(__file__))
-DEPARTMENTS = list(range(1, 96))
+DEPARTMENTS = list(range(95))
 
 
 def build_sale_points(filename: str) -> List[SalePoint]:
@@ -40,35 +40,36 @@ def build_metrics(sale_points: List[dict]) -> dict:
     if isinstance(sale_points, dict):
         sale_points = sale_points["data"]
     LOGGER.debug("Building metrics over %s sale points", len(sale_points))
-    counts = {department: [0] * len(FuelType) for department in DEPARTMENTS}
-    totals = {department: [-1] * len(FuelType) for department in DEPARTMENTS}
+    # [fuel_type -> [department -> value]]
+    counts = [[0] * len(DEPARTMENTS) for _ in range(len(FuelType))]
+    totals = [[-1] * len(DEPARTMENTS) for _ in range(len(FuelType))]
     for sale_point in sale_points:
-        department = int(sale_point[3][:2])  # 3 for postcode
-        for fuel_type, price in enumerate(sale_point[5:]):  # 5 for prices
+        # ``[3]`` for postcode, ``- 1`` to get a 0-based index
+        department = int(sale_point[3][:2]) - 1
+        for fuel_type, price in enumerate(sale_point[5:]):  # [5+] for prices
             if price == -1:
                 continue
-            totals[department][fuel_type] += price
-            counts[department][fuel_type] += 1
-    counts["total"] = [
-        sum(counts[department][fuel_type] for department in DEPARTMENTS)
-        for fuel_type in range(len(FuelType))
-    ]
-    totals["total"] = [
-        sum(totals[department][fuel_type] for department in DEPARTMENTS)
-        for fuel_type in range(len(FuelType))
-    ]
-    averages = {department: [-1] * len(FuelType) for department in DEPARTMENTS + ["total"]}
-    for department, total in totals.items():
-        for fuel_type, price in enumerate(FuelType):
-            price = total[fuel_type]
-            if price == -1:
-                averages[department][fuel_type] = -1
+            totals[fuel_type][department] += price
+            counts[fuel_type][department] += 1
+    averages = []
+    averages_global = []
+    for fuel_type in range(len(FuelType)):
+        fuel_type_averages = []
+        for department in DEPARTMENTS:
+            number = counts[fuel_type][department]
+            if number == 0:
+                fuel_type_averages.append(-1)
             else:
-                averages[department][fuel_type] = price / counts[department][fuel_type]
+                fuel_type_averages.append(totals[fuel_type][department] / number)
+        averages.append(fuel_type_averages)
+        count = sum(counts[fuel_type][dept] for dept in DEPARTMENTS)
+        total = sum(max(0, totals[fuel_type][dept]) for dept in DEPARTMENTS)
+        averages_global.append(total / count)
     return {
-        "averages": averages,
-        "counts": counts,
+        "averages_by_departments": averages,
+        "averages_global": averages_global,
         "fuel_types": [type.name for type in FuelType],
+        "departments": [f"{(department+1):02}" for department in DEPARTMENTS],
     }
 
 
