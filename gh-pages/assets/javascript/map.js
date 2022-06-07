@@ -78,7 +78,7 @@ export class FrenchMap {
     /**
      * Set the values to display.
      * Values must contain data for every department (01-95).
-     * It must be formed as ``values[int(department)] = valueToDisplay``
+     * It must be formed as ``values[departmentCode] = valueToDisplay``
      * @param {object} values Object containing values to link to each departement.
      *  An undefined value under ``value`` attribute will be treated as ``no data``
      * @param {string} title Title of the values
@@ -87,8 +87,12 @@ export class FrenchMap {
         this.max = -1
         this.min = 999999
         for (const feature of this.features) {
-            const department = parseInt(feature.properties.code)
-            let value = values[department.toString()]
+            const departmentCode = feature.properties.code
+            let value = values[departmentCode]
+            if (value === undefined) {
+                console.error("No value for department with code", departmentCode)
+                continue
+            }
             if (value.value !== undefined) {
                 this.max = Math.max(this.max, value.value)
                 this.min = Math.min(this.min, value.value)
