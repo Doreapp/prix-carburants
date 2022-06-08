@@ -98,13 +98,21 @@ export class Map {
     }
 
     /**
-     * Callback for map dragging
+     * Invalidate actually displayed popups,
+     * recompute which popup should be opened and closed
      */
-    onDrag() {
+    invalidatePopups() {
         const zoom = this.map.getZoom()
         if (zoom > MAP_CONSTANTS.popupsZoom) {
             this.changePopupVisibility(true)
         }
+    }
+
+    /**
+     * Callback for map dragging
+     */
+    onDrag() {
+        this.invalidatePopups()
     }
 
     /**
@@ -126,6 +134,13 @@ export class Map {
         } else if (this.popupsDisplayed) {
             this.changePopupVisibility(false)
         }
+    }
+
+    /**
+     * Remove all the markers
+     */
+    clearMarkers() {
+        this.markers.clearLayers()
     }
 
     /**

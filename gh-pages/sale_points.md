@@ -1,7 +1,5 @@
 # Points de vente
 
-Les prix des points de ventes de carburant en France:
-
 Choisi un carburant:
 <div id="selector" class="selector" style="width: 80%;"></div>
 

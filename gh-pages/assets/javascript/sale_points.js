@@ -1,3 +1,4 @@
+import utils from "./utils.js"
 import { Map } from "./map.js"
 
 /**
@@ -5,21 +6,26 @@ import { Map } from "./map.js"
  * TODO handle dynamically fuel type
  * @param {Array<object>} salePoints List of sale points
  */
-function buildMap(salePoints) {
-    const fuelType = 9
+function buildMap(salePoints, fuelNames) {
     let map = new Map()
-    for (let salePoint of salePoints) {
-        const price = salePoint[fuelType]
-        if (price < 0) {
-            continue
+    utils.buildSelector("#selector", fuelNames, e => {
+        const fuelName = e.target.innerText
+        const fuelType = fuelNames.indexOf(fuelName) + 5
+        map.clearMarkers()
+        for (let salePoint of salePoints) {
+            const price = salePoint[fuelType]
+            if (price < 0) {
+                continue
+            }
+            const htmlInfo = "<b>" + price.toFixed(2) +"€</b>"
+            map.addMarker(
+                salePoint[0]/100000.0,
+                salePoint[1]/100000.0,
+                htmlInfo
+            )
         }
-        const htmlInfo = "<b>" + price.toFixed(2) +"€</b>"
-        map.addMarker(
-            salePoint[0]/100000.0,
-            salePoint[1]/100000.0,
-            htmlInfo
-        )
-    }
+        map.invalidatePopups()
+    })
 }
 
 /**
@@ -31,7 +37,7 @@ function main() {
             return response.json()
         })
         .then(data => {
-            buildMap(data.data)
+            buildMap(data.data, data.keys.splice(5))
         })
         .catch(error => {
             console.error("Unable to fetch data", error)
