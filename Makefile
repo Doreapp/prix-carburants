@@ -3,6 +3,7 @@ PYTHON=python3
 LINE_LENGTH=100
 GITHUB_PAGES_DIR=gh-pages
 ESLINT=cd ${GITHUB_PAGES_DIR} && npx eslint
+PRETTIER=cd ${GITHUB_PAGES_DIR} && npx prettier
 
 all: py_format py_lint js_format js_lint
 
@@ -29,11 +30,13 @@ js_setup: # Setup dependencies for JS code
 		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.js \
 		> assets/javascript/vendor/leaflet.js
 
-js_format: # Run eslint to format JS code
+js_format: # Run eslint and prettier to reformat website code
 	${ESLINT} assets/javascript/ --fix
+	${PRETTIER} --write .
 
-js_lint: # Run eslint to check JS code lint
+js_lint: # Run eslint and prettier to check website code's lint
 	${ESLINT} assets/javascript/
+	${PRETTIER} --check .
 
 update-latest-data: # Update the latest data stored in `data` folder
 	rm -rf data
