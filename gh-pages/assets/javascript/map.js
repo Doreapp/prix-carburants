@@ -16,6 +16,12 @@ const MAP_CONSTANTS = {
     maxZoom: 10,
     markersZoom: 8, // Min zoom level to display markers
     popupsZoom: 10, // Min zoom level to display popups
+    markerConfig: {
+        stroke: false,
+        fillColor: "#155799",
+        fillOpacity: 0.6,
+        radius: 10
+    },
 }
 
 /**
@@ -176,12 +182,7 @@ export class Map {
      * @param {String} longInfo HTML text to display in info block, containing more details
      */
     addMarker(latitude, longitude, shortInfo, longInfo) {
-        let marker = L.circleMarker([latitude, longitude], {
-            stroke: false,
-            fillColor: "#155799",
-            fillOpacity: 0.6,
-            radius: 10
-        })
+        let marker = L.circleMarker([latitude, longitude], MAP_CONSTANTS.markerConfig)
         marker.bindPopup(shortInfo, {
             autoClose: false,
             closeButton: false,
