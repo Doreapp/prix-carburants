@@ -69,6 +69,13 @@ export class Map {
             attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
         }).addTo(this.map)
         this.markers = new L.FeatureGroup()
+        this.info = L.control()
+        this.info.onAdd = function () {
+            this._div = L.DomUtil.create("div", "info")
+            this._div.innerHTML = "Zoomez pour voir les points de vente"
+            return this._div
+        }
+        this.info.addTo(this.map)
         this.markersDisplayed = false
         this.popupsDisplayed = false
         this.map.on("zoomend", () => {
@@ -121,12 +128,16 @@ export class Map {
      */
     onZoom(zoom) {
         if (zoom < MAP_CONSTANTS.markersZoom) {
-            if (this.markersDisplayed)
+            if (this.markersDisplayed) {
                 this.map.removeLayer(this.markers)
+                this.info.addTo(this.map)
+            }
             this.markersDisplayed = false
         } else {
-            if (!this.markersDisplayed)
+            if (!this.markersDisplayed) {
                 this.map.addLayer(this.markers)
+                this.map.removeControl(this.info)
+            }
             this.markersDisplayed = true
         }
         if (zoom > MAP_CONSTANTS.popupsZoom) {
