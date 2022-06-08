@@ -5,7 +5,7 @@ email: doreapp.contact@gmail.com
 description: >-
   Un site pour afficher des statistiques et informations sur les prix des carburants français.
 
-github_username:  Doreapp
+github_username: Doreapp
 github_repo: https://github.com/Doreapp/prix-carburants
 
 theme: jekyll-theme-cayman

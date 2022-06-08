@@ -13,16 +13,16 @@
  * @param {Array<Array>} array 2D array. First index defines the row, second one the column.
  */
 export function populateTable(tableQuery, array) {
-    let tableElement = document.querySelector(tableQuery)
-    array.forEach(row => {
-        let rowElement = document.createElement("tr")
-        row.forEach(cell => {
-            let cellElement = document.createElement("td")
-            cellElement.innerText = cell
-            rowElement.appendChild(cellElement)
-        })
-        tableElement.appendChild(rowElement)
+  let tableElement = document.querySelector(tableQuery)
+  array.forEach((row) => {
+    let rowElement = document.createElement("tr")
+    row.forEach((cell) => {
+      let cellElement = document.createElement("td")
+      cellElement.innerText = cell
+      rowElement.appendChild(cellElement)
     })
+    tableElement.appendChild(rowElement)
+  })
 }
 
 /**
@@ -32,27 +32,27 @@ export function populateTable(tableQuery, array) {
  * @param {function} callback Function to call when an item is selected
  */
 export function buildSelector(elementQuery, possibilities, callback) {
-    let element = document.querySelector(elementQuery)
-    let selectedElement = undefined
-    const onSelected = e => {
-        const element = e.target
-        if (selectedElement === e.target){
-            return
-        }
-        if (selectedElement) {
-            selectedElement.classList.remove("active")
-        }
-        selectedElement = element
-        selectedElement.classList.add("active")
-        callback(e)
+  let element = document.querySelector(elementQuery)
+  let selectedElement = undefined
+  const onSelected = (e) => {
+    const element = e.target
+    if (selectedElement === e.target) {
+      return
     }
-    for (let possibility of possibilities) {
-        let possibilityElement = document.createElement("button")
-        possibilityElement.classList.add("selectable")
-        possibilityElement.innerText = possibility
-        possibilityElement.onclick = onSelected
-        element.appendChild(possibilityElement)
+    if (selectedElement) {
+      selectedElement.classList.remove("active")
     }
+    selectedElement = element
+    selectedElement.classList.add("active")
+    callback(e)
+  }
+  for (let possibility of possibilities) {
+    let possibilityElement = document.createElement("button")
+    possibilityElement.classList.add("selectable")
+    possibilityElement.innerText = possibility
+    possibilityElement.onclick = onSelected
+    element.appendChild(possibilityElement)
+  }
 }
 
 export default { populateTable, buildSelector }
