@@ -13,7 +13,15 @@ const COLORS = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C"
 const MAP_CONSTANTS = {
     center: [46.6309, 2.4527],
     minZoom: 5,
-    maxZoom: 10
+    maxZoom: 10,
+    markersZoom: 8, // Min zoom level to display markers
+    popupsZoom: 10, // Min zoom level to display popups
+    markerConfig: {
+        stroke: false,
+        fillColor: "#155799",
+        fillOpacity: 0.6,
+        radius: 10
+    },
 }
 
 /**
@@ -30,7 +38,7 @@ async function loadFrenchGeojson() {
  * @param {string} title Title of the info element, undefined to use none
  * @returns The created info element. Use ``info.addTo(map)``.
  */
-function createInfoElement(title=undefined) {
+function createInfoElement(title = undefined) {
     let info = L.control()
     info.onAdd = function () {
         this._div = L.DomUtil.create("div", "info")
@@ -57,15 +65,147 @@ function createInfoElement(title=undefined) {
 
 
 /**
- * French Map object. Usable to display statistics on french departments.
+ * Map object
  */
-export class FrenchMap {
+export class Map {
+    constructor() {
+        this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            minZoom: MAP_CONSTANTS.minZoom,
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+        }).addTo(this.map)
+        this.markers = new L.FeatureGroup()
+        this.info = L.control()
+        this.info.onAdd = function () {
+            this._div = L.DomUtil.create("div", "info")
+            this._div.innerHTML = "Zoomez pour voir les points de vente"
+            return this._div
+        }
+        this.info.addTo(this.map)
+        this.markersDisplayed = false
+        this.popupsDisplayed = false
+        this.map.on("zoomend", () => {
+            this.onZoom(this.map.getZoom())
+        })
+        this.map.on("dragend", () => {
+            this.onDrag()
+        })
+    }
+
+    /**
+     * Set the HTML text in the info element
+     * @param {String} textHTML HTML text to use
+     */
+    setInfoHTML(textHTML) {
+        this.info._div.innerHTML = textHTML
+    }
+
+    /**
+     * Change the visibility of inbounds popups.
+     * If visible is false, then every popup will be closed.
+     * Else, inbound popups will be opened and outbound ones closed.
+     * @param {boolean} visible Whether to show popups
+     */
+    changePopupVisibility(visible) {
+        this.popupsDisplayed = visible
+        const bounds = this.map.getBounds()
+        for (const layer of this.markers.getLayers()) {
+            if (visible && bounds.contains(layer.getLatLng())) {
+                layer.openPopup()
+            } else {
+                layer.closePopup()
+            }
+        }
+    }
+
+    /**
+     * Invalidate displayed data.
+     * Recompute which popup should be opened and closed and
+     *  what sentence is display in the info.
+     */
+    invalidate() {
+        const zoom = this.map.getZoom()
+        if (zoom > MAP_CONSTANTS.popupsZoom) {
+            this.changePopupVisibility(true)
+        }
+        if (zoom < MAP_CONSTANTS.markersZoom) {
+            this.setInfoHTML("Zoomez pour voir les points de vente")
+        } else {
+            this.setInfoHTML("Cliquez sur un point pour plus de détails")
+        }
+    }
+
+    /**
+     * Callback for map dragging
+     */
+    onDrag() {
+        this.invalidate()
+    }
+
+    /**
+     * Callback for map zooming
+     * @param {number} zoom Zoom index
+     */
+    onZoom(zoom) {
+        if (zoom < MAP_CONSTANTS.markersZoom) {
+            if (this.markersDisplayed) {
+                this.map.removeLayer(this.markers)
+                this.setInfoHTML("Zoomez pour voir les points de vente")
+            }
+            this.markersDisplayed = false
+        } else {
+            if (!this.markersDisplayed) {
+                this.map.addLayer(this.markers)
+                this.setInfoHTML("Cliquez sur un point pour plus de détails")
+            }
+            this.markersDisplayed = true
+        }
+        if (zoom > MAP_CONSTANTS.popupsZoom) {
+            this.changePopupVisibility(true)
+        } else if (this.popupsDisplayed) {
+            this.changePopupVisibility(false)
+        }
+    }
+
+    /**
+     * Remove all the markers
+     */
+    clearMarkers() {
+        this.markers.clearLayers()
+    }
+
+    /**
+     * Add a marker to the map
+     * @param {number} latitude Latitude of the marker
+     * @param {number} longitude Longitude of the marker
+     * @param {String} shortInfo HTML text to display in marker's popup
+     * @param {String} longInfo HTML text to display in info block, containing more details
+     */
+    addMarker(latitude, longitude, shortInfo, longInfo) {
+        let marker = L.circleMarker([latitude, longitude], MAP_CONSTANTS.markerConfig)
+        marker.bindPopup(shortInfo, {
+            autoClose: false,
+            closeButton: false,
+            closeOnClick: false
+        })
+        marker.on("click", () => {
+            this.setInfoHTML(longInfo)
+        })
+        marker.addTo(this.markers)
+    }
+}
+
+
+/**
+ * Department Map object. Usable to display statistics on french departments.
+ */
+export class DepartmentMap {
     constructor() {
         this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: MAP_CONSTANTS.maxZoom,
             minZoom: MAP_CONSTANTS.minZoom,
-            attribution:"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
         }).addTo(this.map)
         loadFrenchGeojson()
             .then(geojson => {
@@ -78,17 +218,21 @@ export class FrenchMap {
     /**
      * Set the values to display.
      * Values must contain data for every department (01-95).
-     * It must be formed as ``values[int(department)] = valueToDisplay``
+     * It must be formed as ``values[departmentCode] = valueToDisplay``
      * @param {object} values Object containing values to link to each departement.
      *  An undefined value under ``value`` attribute will be treated as ``no data``
      * @param {string} title Title of the values
      */
-    setValues(values, title=undefined) {
+    setValues(values, title = undefined) {
         this.max = -1
         this.min = 999999
         for (const feature of this.features) {
-            const department = parseInt(feature.properties.code)
-            let value = values[department.toString()]
+            const departmentCode = feature.properties.code
+            let value = values[departmentCode]
+            if (value === undefined) {
+                console.error("No value for department with code", departmentCode)
+                continue
+            }
             if (value.value !== undefined) {
                 this.max = Math.max(this.max, value.value)
                 this.min = Math.min(this.min, value.value)
@@ -212,4 +356,4 @@ export class FrenchMap {
     }
 }
 
-export default { FrenchMap }
+export default { DepartmentMap, Map }

@@ -1,15 +1,18 @@
 import utils from "./utils.js"
-import { FrenchMap } from "./map.js"
+import { DepartmentMap } from "./map.js"
 
 /**
  * Populate the table containing prices averages
- * @param {object} averages Object containing ``price`` by ``fuel type``.
- *  i.e. ``{"1": 2.01234, "2": ...}``
- * @param {object} fuelNames Object containing ``fuel name`` by ``fuel type``.
- *  i.e. ``{"1": "SP95", "2": ...}``
+ * @param {Array} averages Average prices
+ *  i.e. ``[2.01234, ...]``
+ * @param {Array} fuelNames Corresponding fuel type's name
+ *  i.e. ``["SP95", ...]``
  */
 function populateAveragesTable(averages, fuelNames) {
-    let parsedAverages = utils.mapPricesToNames(averages, fuelNames)
+    let parsedAverages = []
+    for (let i in fuelNames) {
+        parsedAverages.push({ name: fuelNames[i], price: averages[i] })
+    }
     parsedAverages = parsedAverages.sort((obj1, obj2) => obj2.price - obj1.price) // by descending price
     utils.populateTable(
         "table#averages",
@@ -19,24 +22,26 @@ function populateAveragesTable(averages, fuelNames) {
 
 /**
  * Build values usable as input for the Map Visualization
- * @param {object} averages price averages by department and fuel type.
- *  i.e. ``{"44": {"1": 2.123, "2": ...}, "45": {...}}``
- * @param {number} fuelType identifier of the fuel type to extract prices from
+ * @param {Array} averages Averages prices by department
+ *  i.e. ``[2.123, ...]``
+ * @param {Array} departmentCodes Corresponding department's code
+ *  i.e. ``["01", ...]``
  * @returns values usable in ``FrenchMap.setValues()`` function
  */
-function buildMapValues(averages, fuelType) {
+function buildMapValues(averages, departmentCodes) {
     let values = {}
-    for (const department in averages) {
-        const price = averages[department][fuelType]
+    for (let i in averages) {
+        const price = averages[i]
+        const departmentCode = departmentCodes[i]
         if (price < 0) {
-            values[department] =  {
+            values[departmentCode] = {
                 value: undefined,
-                info: {"Prix": "Pas de donnée"}
+                info: { "Prix": "Pas de donnée" }
             }
         } else {
-            values[department] =  {
+            values[departmentCode] = {
                 value: price,
-                info: {"Prix": price.toFixed(2) + "€"}
+                info: { "Prix": price.toFixed(2) + "€" }
             }
         }
     }
@@ -45,23 +50,17 @@ function buildMapValues(averages, fuelType) {
 
 /**
  * Build the french map and additional elements
- * @param {object} rawFuelTypes fuel types from identifier to name.
- *  i.e. ``{"1": "SP95", "2": ...}``
- * @param {object} averages prices average from department to fuelType to price average.
- *  i.e. ``{"44": {"1": 2.123, "2": ...}, "45": {...}}``
+ * @param {Array} fuelNames Names of the fuel types.
+ *  i.e. ``["SP95", ...]``
+ * @param {Array} averages Average prices by fuel and department.
+ *  i.e. ``[[2.123, ...], [...], ...]``
  */
-function buildFrenchMap(rawFuelTypes, averages) {
-    let fuelTypes = []
-    let inverseMap = {}
-    let map = new FrenchMap()
-    for(let key in rawFuelTypes) {
-        const name = rawFuelTypes[key]
-        fuelTypes.push(name)
-        inverseMap[name.toLowerCase()] = key
-    }
-    utils.buildSelector("#selector", fuelTypes, e => {
+function buildFrenchMap(fuelNames, departmentCodes, averages) {
+    let map = new DepartmentMap()
+    utils.buildSelector("#selector", fuelNames, e => {
         const fuelName = e.target.innerText
-        map.setValues(buildMapValues(averages, inverseMap[fuelName.toLowerCase()]))
+        const departmentPrices = averages[fuelNames.indexOf(fuelName)]
+        map.setValues(buildMapValues(departmentPrices, departmentCodes))
     })
 }
 
@@ -74,8 +73,12 @@ function main() {
             return response.json()
         })
         .then(metrics => {
-            buildFrenchMap(metrics.fuel_types, metrics.metrics.averages)
-            populateAveragesTable(metrics.metrics.averages.total, metrics.fuel_types)
+            buildFrenchMap(
+                metrics.fuel_types,
+                metrics.departments,
+                metrics.averages_by_departments
+            )
+            populateAveragesTable(metrics.averages_global, metrics.fuel_types)
         })
         .catch(error => {
             console.error("Unable to fetch data", error)

@@ -3,20 +3,6 @@
  */
 
 /**
- * Transform prices and names in a single array.
- * @param {Map<String, Number>} prices Map fuel_type to price
- * @param {Map<String, String>} names Map fuel_type to fuel_name
- * @returns {Array<Map>} List of objects with ``name`` and ``price`` attributes
- */
-export function mapPricesToNames(prices, names) {
-    let result = []
-    for (let type in prices) {
-        result.push({ name: names[type], price: prices[type] })
-    }
-    return result
-}
-
-/**
  * Populate a Table element with the values from the array.
  * For example, an array ``[["A", 1], ["B", 2]]`` will result in a table like:
  * ```
@@ -69,4 +55,4 @@ export function buildSelector(elementQuery, possibilities, callback) {
     }
 }
 
-export default { mapPricesToNames, populateTable, buildSelector }
+export default { populateTable, buildSelector }
