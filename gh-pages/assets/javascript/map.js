@@ -87,6 +87,14 @@ export class Map {
     }
 
     /**
+     * Set the HTML text in the info element
+     * @param {String} textHTML HTML text to use
+     */
+    setInfoHTML(textHTML) {
+        this.info._div.innerHTML = textHTML
+    }
+
+    /**
      * Change the visibility of inbounds popups.
      * If visible is false, then every popup will be closed.
      * Else, inbound popups will be opened and outbound ones closed.
@@ -105,13 +113,19 @@ export class Map {
     }
 
     /**
-     * Invalidate actually displayed popups,
-     * recompute which popup should be opened and closed
+     * Invalidate actually displayed data.
+     * Recompute which popup should be opened and closed and
+     *  what sentence is display in the info.
      */
-    invalidatePopups() {
+    invalidate() {
         const zoom = this.map.getZoom()
         if (zoom > MAP_CONSTANTS.popupsZoom) {
             this.changePopupVisibility(true)
+        }
+        if (zoom < MAP_CONSTANTS.markersZoom) {
+            this.setInfoHTML("Zoomez pour voir les points de vente")
+        } else {
+            this.setInfoHTML("Cliquez sur un point pour plus de détails")
         }
     }
 
@@ -119,7 +133,7 @@ export class Map {
      * Callback for map dragging
      */
     onDrag() {
-        this.invalidatePopups()
+        this.invalidate()
     }
 
     /**
@@ -130,13 +144,13 @@ export class Map {
         if (zoom < MAP_CONSTANTS.markersZoom) {
             if (this.markersDisplayed) {
                 this.map.removeLayer(this.markers)
-                this.info.addTo(this.map)
+                this.setInfoHTML("Zoomez pour voir les points de vente")
             }
             this.markersDisplayed = false
         } else {
             if (!this.markersDisplayed) {
                 this.map.addLayer(this.markers)
-                this.map.removeControl(this.info)
+                this.setInfoHTML("Cliquez sur un point pour plus de détails")
             }
             this.markersDisplayed = true
         }
@@ -160,17 +174,20 @@ export class Map {
      * @param {number} longitude Longitude of the marker
      * @param {String} info HTML text to display in marker's popup
      */
-    addMarker(latitude, longitude, info) {
+    addMarker(latitude, longitude, shortInfo, longInfo) {
         let marker = L.circleMarker([latitude, longitude], {
             stroke: false,
             fillColor: "#155799",
             fillOpacity: 0.6,
             radius: 10
         })
-        marker.bindPopup(info, {
+        marker.bindPopup(shortInfo, {
             autoClose: false,
             closeButton: false,
             closeOnClick: false
+        })
+        marker.on("click", () => {
+            this.setInfoHTML(longInfo)
         })
         marker.addTo(this.markers)
     }

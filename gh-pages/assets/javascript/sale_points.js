@@ -17,14 +17,17 @@ function buildMap(salePoints, fuelNames) {
             if (price < 0) {
                 continue
             }
-            const htmlInfo = "<b>" + price.toFixed(2) +"€</b>"
+            const shortInfo = "<b>" + price.toFixed(2) +"€</b>"
+            const longInfo = shortInfo + "<br />"
+                + [salePoint[2], salePoint[3], salePoint[4]].join(", ")
             map.addMarker(
                 salePoint[0]/100000.0,
                 salePoint[1]/100000.0,
-                htmlInfo
+                shortInfo,
+                longInfo
             )
         }
-        map.invalidatePopups()
+        map.invalidate()
     })
 }
 
