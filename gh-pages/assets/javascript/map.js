@@ -113,7 +113,7 @@ export class Map {
     }
 
     /**
-     * Invalidate actually displayed data.
+     * Invalidate displayed data.
      * Recompute which popup should be opened and closed and
      *  what sentence is display in the info.
      */
@@ -172,7 +172,8 @@ export class Map {
      * Add a marker to the map
      * @param {number} latitude Latitude of the marker
      * @param {number} longitude Longitude of the marker
-     * @param {String} info HTML text to display in marker's popup
+     * @param {String} shortInfo HTML text to display in marker's popup
+     * @param {String} longInfo HTML text to display in info block, containing more details
      */
     addMarker(latitude, longitude, shortInfo, longInfo) {
         let marker = L.circleMarker([latitude, longitude], {

@@ -2,8 +2,7 @@ import utils from "./utils.js"
 import { Map } from "./map.js"
 
 /**
- * Build and display the map of sale points for a fixed fuel type
- * TODO handle dynamically fuel type
+ * Build and display the map of sale points, as well as the fuel type selector
  * @param {Array<object>} salePoints List of sale points
  */
 function buildMap(salePoints, fuelNames) {
