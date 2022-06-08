@@ -13,7 +13,9 @@ const COLORS = ["#FFEDA0", "#FED976", "#FEB24C", "#FD8D3C", "#FC4E2A", "#E31A1C"
 const MAP_CONSTANTS = {
     center: [46.6309, 2.4527],
     minZoom: 5,
-    maxZoom: 10
+    maxZoom: 10,
+    markersZoom: 8, // Min zoom level to display markers
+    popupsZoom: 10, // Min zoom level to display popups
 }
 
 /**
@@ -30,7 +32,7 @@ async function loadFrenchGeojson() {
  * @param {string} title Title of the info element, undefined to use none
  * @returns The created info element. Use ``info.addTo(map)``.
  */
-function createInfoElement(title=undefined) {
+function createInfoElement(title = undefined) {
     let info = L.control()
     info.onAdd = function () {
         this._div = L.DomUtil.create("div", "info")
@@ -57,15 +59,108 @@ function createInfoElement(title=undefined) {
 
 
 /**
- * French Map object. Usable to display statistics on french departments.
+ * Map object
  */
-export class FrenchMap {
+export class Map {
+    constructor() {
+        this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            minZoom: MAP_CONSTANTS.minZoom,
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+        }).addTo(this.map)
+        this.markers = new L.FeatureGroup()
+        this.markersDisplayed = false
+        this.popupsDisplayed = false
+        this.map.on("zoomend", () => {
+            this.onZoom(this.map.getZoom())
+        })
+        this.map.on("dragend", () => {
+            this.onDrag()
+        })
+    }
+
+    /**
+     * Change the visibility of inbounds popups.
+     * If visible is false, then every popup will be closed.
+     * Else, inbound popups will be opened and outbound ones closed.
+     * @param {boolean} visible Whether to show popups
+     */
+    changePopupVisibility(visible) {
+        this.popupsDisplayed = visible
+        const bounds = this.map.getBounds()
+        for (const layer of this.markers.getLayers()) {
+            if (visible && bounds.contains(layer.getLatLng())) {
+                layer.openPopup()
+            } else {
+                layer.closePopup()
+            }
+        }
+    }
+
+    /**
+     * Callback for map dragging
+     */
+    onDrag() {
+        const zoom = this.map.getZoom()
+        if (zoom > MAP_CONSTANTS.popupsZoom) {
+            this.changePopupVisibility(true)
+        }
+    }
+
+    /**
+     * Callback for map zooming
+     * @param {number} zoom Zoom index
+     */
+    onZoom(zoom) {
+        if (zoom < MAP_CONSTANTS.markersZoom) {
+            if (this.markersDisplayed)
+                this.map.removeLayer(this.markers)
+            this.markersDisplayed = false
+        } else {
+            if (!this.markersDisplayed)
+                this.map.addLayer(this.markers)
+            this.markersDisplayed = true
+        }
+        if (zoom > MAP_CONSTANTS.popupsZoom) {
+            this.changePopupVisibility(true)
+        } else if (this.popupsDisplayed) {
+            this.changePopupVisibility(false)
+        }
+    }
+
+    /**
+     * Add a marker to the map
+     * @param {number} latitude Latitude of the marker
+     * @param {number} longitude Longitude of the marker
+     * @param {String} info HTML text to display in marker's popup
+     */
+    addMarker(latitude, longitude, info) {
+        let marker = L.circleMarker([latitude, longitude], {
+            stroke: false,
+            fillColor: "#155799",
+            fillOpacity: 0.6,
+            radius: 10
+        })
+        marker.bindPopup(info, {
+            autoClose: false,
+            closeButton: false,
+            closeOnClick: false
+        })
+        marker.addTo(this.markers)
+    }
+}
+
+
+/**
+ * Department Map object. Usable to display statistics on french departments.
+ */
+export class DepartmentMap {
     constructor() {
         this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: MAP_CONSTANTS.maxZoom,
             minZoom: MAP_CONSTANTS.minZoom,
-            attribution:"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
         }).addTo(this.map)
         loadFrenchGeojson()
             .then(geojson => {
@@ -83,7 +178,7 @@ export class FrenchMap {
      *  An undefined value under ``value`` attribute will be treated as ``no data``
      * @param {string} title Title of the values
      */
-    setValues(values, title=undefined) {
+    setValues(values, title = undefined) {
         this.max = -1
         this.min = 999999
         for (const feature of this.features) {
@@ -216,4 +311,4 @@ export class FrenchMap {
     }
 }
 
-export default { FrenchMap }
+export default { DepartmentMap, Map }

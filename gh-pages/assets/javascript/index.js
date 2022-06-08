@@ -1,5 +1,5 @@
 import utils from "./utils.js"
-import { FrenchMap } from "./map.js"
+import { DepartmentMap } from "./map.js"
 
 /**
  * Populate the table containing prices averages
@@ -56,7 +56,7 @@ function buildMapValues(averages, departmentCodes) {
  *  i.e. ``[[2.123, ...], [...], ...]``
  */
 function buildFrenchMap(fuelNames, departmentCodes, averages) {
-    let map = new FrenchMap()
+    let map = new DepartmentMap()
     utils.buildSelector("#selector", fuelNames, e => {
         const fuelName = e.target.innerText
         const departmentPrices = averages[fuelNames.indexOf(fuelName)]
