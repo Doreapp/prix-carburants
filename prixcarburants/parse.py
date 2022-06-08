@@ -26,7 +26,7 @@ def build_sale_points(filename: str) -> List[SalePoint]:
     """
     LOGGER.info("Building sale points from %s", filename)
     with open(filename, "r", encoding="windows-1252") as stream:
-        tree = ET.parse(stream)
+        tree = ET.parse(stream, ET.XMLParser(encoding="windows-1252"))
     root = tree.getroot()
     return [SalePoint.build(element) for element in root]
 
@@ -140,4 +140,4 @@ def save_as_json(obj, output_file: str):
     """
     LOGGER.debug("Saving a json in %s", output_file)
     with open(output_file, "w", encoding="utf8") as stream:
-        json.dump(obj, stream, cls=ClassEncoder)
+        json.dump(obj, stream, cls=ClassEncoder, ensure_ascii=False)
