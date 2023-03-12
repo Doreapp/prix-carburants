@@ -9,26 +9,21 @@ import "./vendor/plotly.js"
  *  i.e. ``["SP95", ...]``
  */
 function populateAveragesTable(averages, fuelNames) {
-  let parsedAverages = []
-  for (let i in fuelNames) {
-    parsedAverages.push({ name: fuelNames[i], price: averages[i] })
-  }
-  parsedAverages = parsedAverages.sort((obj1, obj2) => obj2.price - obj1.price) // by descending price
-  utils.populateTable(
-    "table#averages",
-    parsedAverages.map((value) => [value.name, value.price.toFixed(2) + " €"])
-  )
+  utils.populateTable("table#averages", [
+    fuelNames,
+    averages.map((price) => `${price.toFixed(2)}€`),
+  ])
 }
 
 /**
- * Main function for ``index.md`` file
+ * Build the french map and additional elements
+ * @param {Array} fuelNames Names of the fuel types.
+ *  i.e. ``["SP95", ...]``
+ * @param {Array} averages Average prices by fuel and department.
+ *  i.e. ``[[2.123, ...], [...], ...]``
  */
-async function main() {
-  let response = await fetch("./assets/data/metrics.json")
-  const metrics = await response.json()
-  populateAveragesTable(metrics.averages_global, metrics.fuel_types)
-
-  response = await fetch("./assets/geojson/french_departments.json")
+async function buildFrenchMap(fuelNames, departmentCodes, averages) {
+  const response = await fetch("./assets/geojson/french_departments.json")
   const geoJSON = await response.json()
 
   const names = {}
@@ -36,26 +31,27 @@ async function main() {
     names[feature.properties.code] = feature.properties.nom
   }
   const sortedNames = []
-  for (const id of metrics.departments) {
+  for (const id of departmentCodes) {
     sortedNames.push(names[id])
   }
 
-  var data = [
-    {
-      type: "choropleth",
-      name: "France",
-      ids: metrics.departments,
-      locations: metrics.departments,
-      z: metrics.averages_by_departments[0],
-      text: sortedNames,
-      geojson: geoJSON,
-      locationmode: "geojson-id",
-      featureidkey: "properties.code",
-    },
-  ]
+  averages = averages.map((list) =>
+    list.map((value) => (value > 0 ? value : undefined))
+  )
+
+  const data = {
+    type: "choropleth",
+    name: "Prix moyens des carburants par département",
+    ids: departmentCodes,
+    locations: departmentCodes,
+    text: sortedNames,
+    geojson: geoJSON,
+    locationmode: "geojson-id",
+    featureidkey: "properties.code",
+    colorscale: "Reds",
+  }
 
   const layout = {
-    title: "France",
     geo: {
       showframe: false,
       showcoastlines: false,
@@ -71,7 +67,29 @@ async function main() {
     },
   }
 
-  window.Plotly.newPlot("map", data, layout, layout)
+  utils.buildSelector("#selector", fuelNames, (e) => {
+    const fuelName = e.target.innerText
+    data.z = averages[fuelNames.indexOf(fuelName)]
+    window.Plotly.newPlot("map", [data], layout, { responsive: true })
+  })
+
+  document.querySelector("#selector button").click() // Select the first fuel type
+}
+
+/**
+ * Main function for ``index.md`` file
+ */
+async function main() {
+  const response = await fetch("./assets/data/metrics.json")
+  const metrics = await response.json()
+
+  populateAveragesTable(metrics.averages_global, metrics.fuel_types)
+
+  await buildFrenchMap(
+    metrics.fuel_types,
+    metrics.departments,
+    metrics.averages_by_departments
+  )
 }
 
 main()
