@@ -24,20 +24,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         make update-latest-data
-        mkdir -p ~/tmp/ && mv data/* ~/tmp/
-        git fetch && git checkout gh-pages --
-        cp -f ~/tmp/metrics.json assets/data/
-        git add assets/data/
-        if test -n "$( git status -s)"; then
-          echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
-          chmod 600 ~/.netrc
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "doreapp@users.noreply.github.com"
-          git diff
-          git commit -m "⬆️ Update data"
-          git push
-          echo "Data pushed to gh-pages branch"
-        else
-          echo "No data to update"
-        fi
-
+        python send-to-github.py
