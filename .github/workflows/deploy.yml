@@ -11,26 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Send files to gh-pages
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        make js_setup
-        mkdir ~/tmp && cp -r gh-pages/* ~/tmp
-        git fetch
-        git checkout gh-pages --
-        rm -rf * && cp -r ~/tmp/* .
-        echo "!vendor" >> .gitignore
-        git add *
-        if test -n "$( git status -s)"; then
-          echo "machine github.com login $GITHUB_ACTOR password $GITHUB_TOKEN" > ~/.netrc
-          chmod 600 ~/.netrc
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "doreapp@users.noreply.github.com"
-          git diff
-          git commit -m "🚀 Deploy GitHub pages ($GITHUB_SHA)"
-          git push
-          echo "GitHub pages sources updated"
-        else
-          echo "No file to update"
-        fi
+    - uses: actions/cache@v2
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile') }}
+        restore-keys: |
+          ${{ runner.os }}-gems-
+    - uses: helaili/jekyll-action@v2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        target_branch: 'gh-pages'
+        jekyll_src: 'gh-pages'
+        keep_history: true
