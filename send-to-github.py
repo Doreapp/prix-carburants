@@ -48,7 +48,7 @@ def update_file(path):
 def main():
     """Main entrypoint"""
     for path in os.listdir("data"):
-        update_file(path)
+        update_file(f"data/{path}")
 
 
 if __name__ == "__main__":
