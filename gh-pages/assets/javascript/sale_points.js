@@ -8,8 +8,8 @@ import "./vendor/plotly.js"
 function buildMap(salePoints, fuelNames) {
   const data = {
     name: "French fuel sale points",
-    type: 'scattermapbox',
-    mode: 'markers',
+    type: "scattermapbox",
+    mode: "markers",
     marker: {
       size: 20,
       colorscale: "Bluered",
@@ -19,9 +19,9 @@ function buildMap(salePoints, fuelNames) {
     cluster: {
       size: 20,
       color: "#1F77B4",
-      enabled: true
+      enabled: true,
     },
-  };
+  }
 
   const layout = {
     mapbox: {
@@ -34,14 +34,19 @@ function buildMap(salePoints, fuelNames) {
   utils.buildSelector("#sale-points-selector", fuelNames, (e) => {
     const fuelName = e.target.innerText
     const fuelType = fuelNames.indexOf(fuelName) + 5
-    const filtered = salePoints.filter(point => point[fuelType] > 0)
+    const filtered = salePoints.filter((point) => point[fuelType] > 0)
 
-    data.lat = filtered.map(point => point[0] / 100000.0)
-    data.lon = filtered.map(point => point[1] / 100000.0)
-    data.text = filtered.map(point => `${point[5].toFixed(2)}€ - ${point[2]}, ${point[3]}, ${point[4]}`)
-    data.marker.color = filtered.map(point => point[fuelType])
+    data.lat = filtered.map((point) => point[0] / 100000.0)
+    data.lon = filtered.map((point) => point[1] / 100000.0)
+    data.text = filtered.map(
+      (point) =>
+        `${point[5].toFixed(2)}€ - ${point[2]}, ${point[3]}, ${point[4]}`
+    )
+    data.marker.color = filtered.map((point) => point[fuelType])
 
-    window.Plotly.newPlot('sale-points-map', [data], layout, { responsive: true });
+    window.Plotly.newPlot("sale-points-map", [data], layout, {
+      responsive: true,
+    })
   })
 
   document.querySelector("#sale-points-selector button").click()
