@@ -67,13 +67,13 @@ async function buildFrenchMap(fuelNames, departmentCodes, averages) {
     },
   }
 
-  utils.buildSelector("#selector", fuelNames, (e) => {
+  utils.buildSelector("#by-region-selector", fuelNames, (e) => {
     const fuelName = e.target.innerText
     data.z = averages[fuelNames.indexOf(fuelName)]
-    window.Plotly.newPlot("map", [data], layout, { responsive: true })
+    window.Plotly.newPlot("by-region-map", [data], layout, { responsive: true })
   })
 
-  document.querySelector("#selector button").click() // Select the first fuel type
+  document.querySelector("#by-region-selector button").click() // Select the first fuel type
 }
 
 /**
