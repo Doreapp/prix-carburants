@@ -25,10 +25,8 @@ js_setup: # Setup dependencies for JS code
 	mkdir -p ${GITHUB_PAGES_DIR}/assets/javascript/vendor/
 	mkdir -p ${GITHUB_PAGES_DIR}/assets/css/vendor/
 	cd ${GITHUB_PAGES_DIR} && \
-		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.css \
-		> assets/css/vendor/leaflet.css && \
-		curl -X GET https://unpkg.com/leaflet@1.8.0/dist/leaflet.js \
-		> assets/javascript/vendor/leaflet.js
+		curl -X GET https://cdn.plot.ly/plotly-2.18.2.min.js \
+		> assets/javascript/vendor/plotly.js
 
 js_format: # Run eslint and prettier to reformat website code
 	${ESLINT} assets/javascript/ --fix

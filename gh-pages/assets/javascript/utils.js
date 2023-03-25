@@ -14,14 +14,16 @@
  */
 export function populateTable(tableQuery, array) {
   let tableElement = document.querySelector(tableQuery)
+  let first = true
   array.forEach((row) => {
     let rowElement = document.createElement("tr")
     row.forEach((cell) => {
-      let cellElement = document.createElement("td")
+      let cellElement = document.createElement(first ? "th" : "td")
       cellElement.innerText = cell
       rowElement.appendChild(cellElement)
     })
     tableElement.appendChild(rowElement)
+    first = false
   })
 }
 

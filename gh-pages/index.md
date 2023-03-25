@@ -1,26 +1,25 @@
-# Prix carburants
-
-Voici des statistiques à propos des carburants, en France.
-
-<a href="./sale_points" class="btn">Voir la carte des points de vente</a>
+---
+title: Prix des carburants français
+---
 
 ## Prix moyens
 
-### Sur l'ensemble de la France
+### <a href="#sur-lensemble-de-la-france">Sur l'ensemble de la France</a>
 
-<table id="averages">
-  <tr>
-    <th>Carburant</th>
-    <th>Prix</th>
-  </tr>
-</table>
+<table id="averages"></table>
 
-### Par département
+### <a href="#par-département">Par département</a>
 
-Choisi un carburant:
+<div id="by-region-selector" class="selector"></div>
 
-<div id="selector" class="selector" style="width: 80%;"></div>
-
-<div id="map" style="height: 80vh; width: 80%;"></div>
+<div id="by-region-map" style="width: 100%; aspect-ratio:1 / 1"></div>
 
 <script type="module" src="./assets/javascript/index.js"></script>
+
+## <a href="#points-de-ventes">Points de ventes</a>
+
+<div id="sale-points-selector" class="selector"></div>
+
+<div id="sale-points-map" style="width: 100%; aspect-ratio: 1 / 1"></div>
+
+<script type="module" src="./assets/javascript/sale_points.js"></script>
