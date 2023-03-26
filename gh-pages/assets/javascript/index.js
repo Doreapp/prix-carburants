@@ -43,7 +43,6 @@ function buildMapValues(averages, departmentCodes) {
   return values
 }
 
-
 /**
  * Build the french map and additional elements
  * @param {Array} fuelNames Names of the fuel types.
