@@ -1,5 +1,5 @@
 import utils from "./utils.js"
-import "./vendor/plotly.js"
+import { DepartmentMap } from "./map.js"
 
 /**
  * Populate the table containing prices averages
@@ -16,63 +16,48 @@ function populateAveragesTable(averages, fuelNames) {
 }
 
 /**
+ * Build values usable as input for the Map Visualization
+ * @param {Array} averages Averages prices by department
+ *  i.e. ``[2.123, ...]``
+ * @param {Array} departmentCodes Corresponding department's code
+ *  i.e. ``["01", ...]``
+ * @returns values usable in ``FrenchMap.setValues()`` function
+ */
+function buildMapValues(averages, departmentCodes) {
+  let values = {}
+  for (let i in averages) {
+    const price = averages[i]
+    const departmentCode = departmentCodes[i]
+    if (price < 0) {
+      values[departmentCode] = {
+        value: undefined,
+        info: { Prix: "Pas de donnée" },
+      }
+    } else {
+      values[departmentCode] = {
+        value: price,
+        info: { Prix: price.toFixed(2) + "€" },
+      }
+    }
+  }
+  return values
+}
+
+
+/**
  * Build the french map and additional elements
  * @param {Array} fuelNames Names of the fuel types.
  *  i.e. ``["SP95", ...]``
  * @param {Array} averages Average prices by fuel and department.
  *  i.e. ``[[2.123, ...], [...], ...]``
  */
-async function buildFrenchMap(fuelNames, departmentCodes, averages) {
-  const response = await fetch("./assets/geojson/french_departments.json")
-  const geoJSON = await response.json()
-
-  const names = {}
-  for (const feature of geoJSON.features) {
-    names[feature.properties.code] = feature.properties.nom
-  }
-  const sortedNames = []
-  for (const id of departmentCodes) {
-    sortedNames.push(names[id])
-  }
-
-  averages = averages.map((list) =>
-    list.map((value) => (value > 0 ? value : undefined))
-  )
-
-  const data = {
-    type: "choropleth",
-    name: "Prix moyens des carburants par département",
-    ids: departmentCodes,
-    locations: departmentCodes,
-    text: sortedNames,
-    geojson: geoJSON,
-    locationmode: "geojson-id",
-    featureidkey: "properties.code",
-    colorscale: "Reds",
-  }
-
-  const layout = {
-    geo: {
-      showframe: false,
-      showcoastlines: false,
-      projection: {
-        type: "mercator",
-      },
-      lonaxis: {
-        range: [-6, 10],
-      },
-      lataxis: {
-        range: [41, 52],
-      },
-    },
-  }
-
+function buildFrenchMap(fuelNames, departmentCodes, averages) {
+  let map = new DepartmentMap("by-region-map")
   utils.buildSelector("#by-region-selector", fuelNames, (e) => {
     const fuelName = e.target.innerText
-    data.z = averages[fuelNames.indexOf(fuelName)]
-    window.Plotly.newPlot("by-region-map", [data], layout, { responsive: true })
+    const departmentPrices = averages[fuelNames.indexOf(fuelName)]
+    map.setValues(buildMapValues(departmentPrices, departmentCodes))
   })
-
   document.querySelector("#by-region-selector button").click() // Select the first fuel type
 }
 
@@ -85,7 +70,7 @@ async function main() {
 
   populateAveragesTable(metrics.averages_global, metrics.fuel_types)
 
-  await buildFrenchMap(
+  buildFrenchMap(
     metrics.fuel_types,
     metrics.departments,
     metrics.averages_by_departments
