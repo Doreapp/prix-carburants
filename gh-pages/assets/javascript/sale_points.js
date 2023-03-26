@@ -1,52 +1,34 @@
 import utils from "./utils.js"
-import "./vendor/plotly.js"
+import { Map } from "./map.js"
 
 /**
  * Build and display the map of sale points, as well as the fuel type selector
  * @param {Array<object>} salePoints List of sale points
  */
 function buildMap(salePoints, fuelNames) {
-  const data = {
-    name: "French fuel sale points",
-    type: "scattermapbox",
-    mode: "markers",
-    marker: {
-      size: 20,
-      colorscale: "Bluered",
-      // opacity: 0.8,
-      showscale: true,
-    },
-    cluster: {
-      size: 20,
-      color: "#1F77B4",
-      enabled: true,
-    },
-  }
-
-  const layout = {
-    mapbox: {
-      style: "open-street-map",
-      center: { lat: 46.4, lon: 2.4 },
-      zoom: 5,
-    },
-  }
-
+  let map = new Map("sale-points-map")
   utils.buildSelector("#sale-points-selector", fuelNames, (e) => {
     const fuelName = e.target.innerText
     const fuelType = fuelNames.indexOf(fuelName) + 5
-    const filtered = salePoints.filter((point) => point[fuelType] > 0)
-
-    data.lat = filtered.map((point) => point[0] / 100000.0)
-    data.lon = filtered.map((point) => point[1] / 100000.0)
-    data.text = filtered.map(
-      (point) =>
-        `${point[5].toFixed(2)}€ - ${point[2]}, ${point[3]}, ${point[4]}`
-    )
-    data.marker.color = filtered.map((point) => point[fuelType])
-
-    window.Plotly.newPlot("sale-points-map", [data], layout, {
-      responsive: true,
-    })
+    map.clearMarkers()
+    for (let salePoint of salePoints) {
+      const price = salePoint[fuelType]
+      if (price < 0) {
+        continue
+      }
+      const shortInfo = "<b>" + price.toFixed(2) + "€</b>"
+      const longInfo =
+        shortInfo +
+        "<br />" +
+        [salePoint[2], salePoint[3], salePoint[4]].join(", ")
+      map.addMarker(
+        salePoint[0] / 100000.0,
+        salePoint[1] / 100000.0,
+        shortInfo,
+        longInfo
+      )
+    }
+    map.invalidate()
   })
 
   document.querySelector("#sale-points-selector button").click()

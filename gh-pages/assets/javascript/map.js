@@ -80,8 +80,8 @@ function createInfoElement(title = undefined) {
  * Map object
  */
 export class Map {
-    constructor() {
-        this.map = L.map("map").setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
+    constructor(idSelector = "map") {
+        this.map = L.map(idSelector).setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             minZoom: MAP_CONSTANTS.minZoom,
             attribution: MAP_CONSTANTS.attribution,
