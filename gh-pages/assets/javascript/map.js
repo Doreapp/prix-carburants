@@ -217,10 +217,10 @@ export class DepartmentMap {
     constructor(idSelector = "map") {
         this.map = L.map(idSelector).setView(MAP_CONSTANTS.center, MAP_CONSTANTS.minZoom)
         this._onready = null
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png", {
             maxZoom: MAP_CONSTANTS.maxZoom,
             minZoom: MAP_CONSTANTS.minZoom,
-            attribution: MAP_CONSTANTS.attribution,
+            attribution: '©OpenStreetMap, ©CartoDB',
         }).addTo(this.map)
         loadFrenchGeojson().then((geojson) => {
             this.features = geojson.features
