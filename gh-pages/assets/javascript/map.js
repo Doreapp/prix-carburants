@@ -46,37 +46,6 @@ async function loadFrenchGeojson() {
 }
 
 /**
- * Create an info element to display on the top right of the map
- * @param {string} title Title of the info element, undefined to use none
- * @returns The created info element. Use ``info.addTo(map)``.
- */
-function createInfoElement(title = undefined) {
-  let info = L.control()
-  info.onAdd = function () {
-    this._div = L.DomUtil.create("div", "info")
-    this.update()
-    return this._div
-  }
-  info.update = function (props) {
-    let html = ""
-    if (title) {
-      html += "<h4>" + title + "</h4>"
-    }
-    if (props) {
-      html +=
-        "<b>Département</b>: " + props.nom + " (" + props.code + ")" + "<br />"
-      for (let title in props.info) {
-        html += "<b>" + title + "</b>: " + props.info[title] + "<br />"
-      }
-    } else {
-      html += "Survolez un département"
-    }
-    this._div.innerHTML = html
-  }
-  return info
-}
-
-/**
  * Map object
  */
 export class Map {
@@ -276,20 +245,25 @@ export class DepartmentMap {
     this.geojson = L.geoJson(this.features, {
       style: (feature) => this.styleForFeature(feature),
       onEachFeature: (feature, layer) => {
+        let html =
+          "<b>Département</b>: " +
+          feature.properties.nom +
+          " (" +
+          feature.properties.code +
+          ")" +
+          "<br />"
+        for (let title in feature.properties.info) {
+          html +=
+            "<b>" + title + "</b>: " + feature.properties.info[title] + "<br />"
+        }
+        layer.bindPopup(html, { closeButton: false })
         layer.on({
           mouseover: (e) => this.highlightFeature(e),
           mouseout: (e) => this.resetHighlight(e),
-          click: (e) => this.zoomToFeature(e),
         })
       },
     })
     this.geojson.addTo(this.map)
-
-    if (this.info) {
-      this.map.removeControl(this.info)
-    }
-    this.info = createInfoElement(title)
-    this.info.addTo(this.map)
 
     this.addColorsLegend()
   }
@@ -369,7 +343,7 @@ export class DepartmentMap {
     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
       layer.bringToFront()
     }
-    this.info.update(layer.feature.properties)
+    layer.openPopup()
   }
 
   /**
@@ -378,7 +352,7 @@ export class DepartmentMap {
    */
   resetHighlight(e) {
     this.geojson.resetStyle(e.target)
-    this.info.update()
+    e.target.closePopup()
   }
 
   /**
