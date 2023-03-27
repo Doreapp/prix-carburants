@@ -174,6 +174,7 @@ export class Map {
       autoClose: false,
       closeButton: false,
       closeOnClick: false,
+      closeOnEscapeKey: false,
     })
     marker.on("click", () => {
       this.setInfoHTML(longInfo)

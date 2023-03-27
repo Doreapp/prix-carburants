@@ -34,7 +34,10 @@
 }
 
 .leaflet-popup-content {
-  margin: 0.4em;
-  padding: 0.5em;
+  padding: 0.4em;
   text-align: center;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0;
 }
