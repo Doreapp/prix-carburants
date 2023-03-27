@@ -28,3 +28,16 @@
 #map {
   border-radius: 2px;
 }
+
+.leaflet-popup-tip-container {
+  display: none;
+}
+
+.leaflet-popup-content {
+  padding: 0.4em;
+  text-align: center;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0;
+}
