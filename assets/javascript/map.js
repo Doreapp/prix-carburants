@@ -45,15 +45,31 @@ async function loadFrenchGeojson() {
   return await response.json()
 }
 
-/**
- * Map object
- */
-export class Map {
+class BaseMap {
   constructor(idSelector = "map") {
     this.map = L.map(idSelector).setView(
       MAP_CONSTANTS.center,
       MAP_CONSTANTS.minZoom
     )
+  }
+
+  locate() {
+    this.map.on("locationfound", (e) => this.onLocationFound(e))
+    this.map.locate({ setView: true, maxZoom: 10 })
+  }
+
+  onLocationFound(e) {
+    const radius = e.accuracy
+    L.circle(e.latlng, radius).addTo(this.map)
+  }
+}
+
+/**
+ * Map object
+ */
+export class Map extends BaseMap {
+  constructor(idSelector = "map") {
+    super(idSelector)
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       minZoom: MAP_CONSTANTS.minZoom,
       attribution: MAP_CONSTANTS.attribution,
@@ -186,12 +202,9 @@ export class Map {
 /**
  * Department Map object. Usable to display statistics on french departments.
  */
-export class DepartmentMap {
+export class DepartmentMap extends BaseMap {
   constructor(idSelector = "map") {
-    this.map = L.map(idSelector).setView(
-      MAP_CONSTANTS.center,
-      MAP_CONSTANTS.minZoom
-    )
+    super(idSelector)
     this._onready = null
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png",
