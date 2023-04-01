@@ -1,0 +1,38 @@
+main .btn {
+    color: #efefef;
+    background-color: #278580;
+    text-align: center;
+}
+
+main .btn:hover {
+    background-color: #449D89;
+}
+
+:root {
+    --selected-color: rgb(60, 122, 91);
+    --default-color: transparent;
+}
+
+button.selectable {
+    background-color: var(--default-color);
+    border: none;
+    outline: none;
+    flex: 1;
+    text-align: center;
+}
+
+button.selectable:hover {
+    font-weight: bold;
+}
+
+button.selectable.active {
+    font-weight: bold;
+    color: white;
+    background-color: var(--selected-color);
+}
+
+.selector {
+    border-radius: 2px;
+    border: 0.1px solid rgb(206, 203, 199);
+    display: flex;
+}
