@@ -54,13 +54,13 @@ class BaseMap {
   }
 
   locate() {
-    this.map.on('locationfound', (e) => this.onLocationFound(e));
-    this.map.locate({ setView: true, maxZoom: 10 });
+    this.map.on("locationfound", (e) => this.onLocationFound(e))
+    this.map.locate({ setView: true, maxZoom: 10 })
   }
 
   onLocationFound(e) {
-    const radius = e.accuracy;
-    L.circle(e.latlng, radius).addTo(this.map);
+    const radius = e.accuracy
+    L.circle(e.latlng, radius).addTo(this.map)
   }
 }
 

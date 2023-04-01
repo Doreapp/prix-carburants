@@ -8,9 +8,9 @@ description: >-
   Statistiques sur les prix des carburants français
 
 plugins:
-- jekyll-seo-tag
-- jekyll-feed
-- jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-feed
+  - jekyll-remote-theme
 
 github_username: Doreapp
 github_repo: https://github.com/Doreapp/prix-carburants
