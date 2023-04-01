@@ -7,6 +7,7 @@ import { Map } from "./map.js"
  */
 function buildMap(salePoints, fuelNames) {
   let map = new Map("sale-points-map")
+  map.locate()
   utils.buildSelector("#sale-points-selector", fuelNames, (e) => {
     const fuelName = e.target.innerText
     const fuelType = fuelNames.indexOf(fuelName) + 5
