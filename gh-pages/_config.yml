@@ -1,4 +1,6 @@
 # Jekyll configuration
+remote_theme: pages-themes/cayman
+
 title: Prix Carburants
 author: Antoine Mandin
 email: doreapp.contact@gmail.com
@@ -7,10 +9,12 @@ description: >-
 
 plugins:
 - jekyll-seo-tag
+- jekyll-feed
+- jekyll-remote-theme
 
 github_username: Doreapp
 github_repo: https://github.com/Doreapp/prix-carburants
 
-theme: jekyll-theme-cayman
+baseurl: ""
 url: https://doreapp.github.io/prix-carburants/
 repository: Doreapp/prix-carburants
