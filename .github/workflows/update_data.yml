@@ -1,10 +1,10 @@
 # Workflow to update the data displayed
 name: Update data
 
-on:
-  schedule:
+on: [push] 
+  # schedule:
     # Every hour at 42th minute
-    - cron:  '42 * * * *'
+    # - cron:  '42 * * * *'
 
 jobs:
   update-data:
